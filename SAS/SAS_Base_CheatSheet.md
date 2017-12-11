@@ -1,7 +1,5 @@
 CSS: sascs.css
 
-<!--<div class="three-cols">-->
-<!--</div><div class="page-break"></div><font size=32>test</font><div class="three-cols">-->
 # SAS Base CheatSheet
 
 ## Basics
@@ -17,7 +15,7 @@ DATA step only produces output. PROC step only produces report.
     
     * comment statement;
 
-##Accessing SAS Libraries
+## Accessing SAS Libraries
 
 **Work** is a temporary library that is used to store and access SAS data sets for the duration of the session. **Sasuser** and **sashelp** are permanent libraries that are available in every SAS session.
 
@@ -40,7 +38,7 @@ In an interactive SAS session, a libref remains in effect until you cancel it, c
     LIBNAME libref CLEAR;
 
 
-##Examining SAS Data Sets
+## Examining SAS Data Sets
 
 The **descriptor portion** contains general information about the data set (such as the data set name and the number of observations) and information about the variable attributes (such as name, type, and length). 
 
@@ -69,14 +67,14 @@ SAS variable and data set names must be
 * start with a letter or underscore, followed by letters, underscores, and numbers. 
 * Variable names are not case sensitive.
 
-###Sample Programs
+### Sample Programs
 
-####Accessing a SAS Library
+#### Accessing a SAS Library
 
     %let path=filepath;
     libname orion "&path";
 
-####Browsing a Library
+#### Browsing a Library
 
     proc contents data=orion._all_;
     run;
@@ -84,22 +82,22 @@ SAS variable and data set names must be
     proc contents data=orion._all_ nods;
     run;
 
-####Viewing a Data Set with PROC PRINT
+#### Viewing a Data Set with PROC PRINT
 
     proc print data=orion.country;
     run;
  
-####Viewing the Descriptor Portion of a Data Set
+#### Viewing the Descriptor Portion of a Data Set
 
     proc contents data=orion.sales;
     run;
 
-####Viewing the Data Portion of a SAS Data Set
+#### Viewing the Data Portion of a SAS Data Set
 
     proc print data=orion.sales;
     run;
 
-##Subsetting Report Data
+## Subsetting Report Data
 
 You can use the **VAR** statement in a PROC PRINT step to **subset the variables** in a report. You specify the variables to include and list them in the order in which they are to be displayed.
 
@@ -118,7 +116,7 @@ You can use the **ID** statement in a PROC PRINT step to specify a variable to p
 
     ID variable(s);
 
-##Sorting and Grouping Report Data
+## Sorting and Grouping Report Data
 
 You can sort on one variable or multiple variables, sort on character or numeric variables, and sort in ascending or descending order. 
 
@@ -166,9 +164,9 @@ Use the **LABEL** option or **SPLIT=** option in the PROC PRINT statement to tel
  
 
 
-###Sample Programs
+### Sample Programs
 
-####Selecting Observations
+#### Selecting Observations
 
     proc print data=orion.sales noobs;
        var Last_Name First_Name Salary Country;
@@ -183,7 +181,7 @@ Use the **LABEL** option or **SPLIT=** option in the PROC PRINT statement to tel
            Customer_Type;
     run;
 
-####Grouping Observations in Reports
+#### Grouping Observations in Reports
 
     proc sort data=orion.sales          
               out=work.sales2;   
@@ -193,7 +191,7 @@ Use the **LABEL** option or **SPLIT=** option in the PROC PRINT statement to tel
        by Country;
     run;
 
-####Displaying Labels in a Report
+#### Displaying Labels in a Report
 
     title1 'Orion Star Sales Staff';
     title2 'Salary Report';
@@ -207,7 +205,7 @@ Use the **LABEL** option or **SPLIT=** option in the PROC PRINT statement to tel
     title;
     footnote;
 
-##Formatting Data Values
+## Formatting Data Values
 
 Using SAS Formats
 
@@ -247,7 +245,7 @@ SAS stores date values as the number of days between January 1, 1960, and a spec
 | DOLLAR5.2 | 27134.5864 | 27135 |
 | DOLLAR4.2 | 27134.5864 | 27E3 |
 
-###Creating and Applying User-Defined Formats
+### Creating and Applying User-Defined Formats
 
 **format name** can have up to 32 characters. 
 
@@ -271,9 +269,9 @@ The **LOW** and **HIGH** keywords are used to define a continuous range when the
 *Remember that for character values, the LOW keyword treats missing values as the lowest possible values. However, for numeric values, LOW does not include missing values.*
 
 
-###Sample Programs
+### Sample Programs
 
-####Specifying a User-Defined Format for a Character Variable
+#### Specifying a User-Defined Format for a Character Variable
 
     proc format;
        value tiers low-<50000='Tier1'
@@ -299,7 +297,7 @@ The **LOW** and **HIGH** keywords are used to define a continuous range when the
     run;
 
 
-##Reading SAS Data Sets
+## Reading SAS Data Sets
 
 You use the WHERE statement to subset the input data set by selecting only the observations that meet a particular condition. To subset based on a SAS date value, you can use a SAS date constant in the WHERE expression. SAS automatically converts a date constant to a SAS date value.
 
@@ -311,7 +309,7 @@ You use the WHERE statement to subset the input data set by selecting only the o
 
     variable=expression;
 
-###Customizing a SAS Data Set
+### Customizing a SAS Data Set
 
 By default, the SET statement reads all of the observations and variables from the input data set and writes them to the output data set. 
 
@@ -332,7 +330,7 @@ If you use a KEEP statement, you must include every variable to be written, incl
 
 To **subset observations** in a **PROC** step, you **MUST** use a WHERE statement. You **cannot** use a subsetting IF statement in a PROC step. 
 
-###Adding Permanent Attributes
+### Adding Permanent Attributes
 
 Using a FORMAT statement in a DATA step permanently associates formats with variables. 
 
@@ -342,9 +340,9 @@ Using a FORMAT statement in a DATA step permanently associates formats with vari
 
     FORMAT variable(s) format ...;
 
-###Sample Programs
+### Sample Programs
 
-####Subsetting Variables in a DATA Step: DROP and KEEP
+#### Subsetting Variables in a DATA Step: DROP and KEEP
 
     data work.subset1;
        set orion.sales;
@@ -372,9 +370,9 @@ Using a FORMAT statement in a DATA step permanently associates formats with vari
     run;
 
 
-##Reading Spreadsheet and Database Data
+## Reading Spreadsheet and Database Data
 
-###Reading Spreadsheet Data
+### Reading Spreadsheet Data
 
     LIBNAME libref <engine> 
         "workbook-name" <options>;
@@ -387,21 +385,21 @@ In order to address Sheet within the spreadsheet, you do it like this:
 
 When you assign a libref to an Excel workbook in SAS, the workbook cannot be opened in Excel. To disassociate a libref, you submit a LIBNAME statement specifying the libref and the CLEAR option. SAS disconnects from the data source and closes any resources that are associated with the connection.
 
-###Reading Database Data
+### Reading Database Data
 
 You can also read database tables as if they were SAS data sets by using the LIBNAME statement supported by SAS/ACCESS Interface to Oracle. This SAS/ACCESS LIBNAME statement includes a libref, an engine name, and additional connection options that are site- and installation-specific. After you submit the LIBNAME statement, SAS treats the Oracle database as if it were a SAS library, and any table in the database can be referenced using a SAS two-level name, as if it were a SAS data set.
 
     LIBNAME libref engine <SAS/ACCESS Oracle options>;
 
-###Sample Programs
+### Sample Programs
 
-####Accessing Excel Worksheets in SAS
+#### Accessing Excel Worksheets in SAS
 
     libname orionx pcfiles path="&path/sales.xls";
     proc contents data=orionx._all_;
     run;
 
-####Printing an Excel Worksheet
+#### Printing an Excel Worksheet
 
     proc print data=orionx.'Australia$'n;
     run;
@@ -410,7 +408,7 @@ You can also read database tables as if they were SAS data sets by using the LIB
        var Employee_ID Last_Name Job_Title Salary;
     run;
 
-####Creating a SAS Data Set from an Excel Worksheet
+#### Creating a SAS Data Set from an Excel Worksheet
 
     libname orionx pcfiles path="&path/sales.xls";
     data work.subset;
@@ -426,7 +424,7 @@ You can also read database tables as if they were SAS data sets by using the LIB
 
 ## Reading Raw Data Files
 
-###Reading Standard Delimited Data
+### Reading Standard Delimited Data
 
 The **INFILE** statement identifies the name and location of the input file. You use the **DLM=** option if the file has a delimiter other t.-.-,.–m,han a blank space. 
 The **INPUT** statement tells SAS how to read the values, and specifies the name and type for each variable to be created. 
@@ -454,7 +452,7 @@ You can use a **LENGTH** statement before the INPUT statement in a DATA step to 
 
     LENGTH variable(s) <$> length;
 
-###Reading Nonstandard Delimited Data
+### Reading Nonstandard Delimited Data
 
 You can use modified list input to read standard and nonstandard data from a delimited raw data file. Modified list input uses an **informat** and a colon format modifier for each field to be read. 
 
@@ -480,7 +478,7 @@ You can use **LABEL** and **FORMAT** statements to permanently store label and f
     ...
     ;
 
-###Validating Data
+### Validating Data
 
 When data values in the input file aren't appropriate for the INPUT statement in a program, a data error occurs during program execution. SAS records the error in the log by writing a note about the error, along with a ruler and the contents of the input buffer and the PDV. The variable _ERROR_ is set to 1, a missing value is assigned to the corresponding variable, and execution continues.
 
@@ -491,9 +489,9 @@ If you have missing data values at the end of a record, you can use the **MISSOV
     INFILE 'raw-data-file-name' 
         <DLM=> <DSD> <MISSOVER>;
 
-###Sample Programs
+### Sample Programs
 
-####Specifying the Lengths of Variables Explicitly
+#### Specifying the Lengths of Variables Explicitly
 
     data work.sales2;
        length Employee_ID  8 First_Name $ 12
@@ -509,7 +507,7 @@ If you have missing data values at the end of a record, you can use the **MISSOV
     proc print data=work.sales2;
     run;
 
-####Specifying Informats in the INPUT Statement
+#### Specifying Informats in the INPUT Statement
 
     data work.sales2;
        infile "&path/sales.csv" dlm=',';
@@ -521,7 +519,7 @@ If you have missing data values at the end of a record, you can use the **MISSOV
     proc print data=work.sales2;
     run;
 
-####Reading Instream Data
+#### Reading Instream Data
 
     data work.newemps;
        input First_Name $ Last_Name $  
@@ -545,7 +543,7 @@ If you have missing data values at the end of a record, you can use the **MISSOV
     proc print data=work.newemps2;
     run; 
 
-###Reading a Raw Data File That Contains Missing Data
+### Reading a Raw Data File That Contains Missing Data
 
     data work.contacts;
        length Name $ 20 Phone Mobile $ 14;
@@ -555,7 +553,7 @@ If you have missing data values at the end of a record, you can use the **MISSOV
     proc print data=work.contacts noobs;
     run;
 
-####Reading a Raw Data File Using the MISSOVER Option
+#### Reading a Raw Data File Using the MISSOVER Option
 
     data work.contacts2;
        infile "&path/phone.csv" dlm=',' missover; 
@@ -571,9 +569,9 @@ If you have missing data values at the end of a record, you can use the **MISSOV
     proc print data=contacts2 noobs;
     run;
 
-##Manipulating Data
+## Manipulating Data
 
-###Using SAS Functions
+### Using SAS Functions
 
 You use an assignment statement in a DATA step to evaluate an expression and assign the result to a new or existing variable. The expression on the right side of an assignment statement can include calls to SAS functions. A SAS function is a routine that accepts arguments and returns a value.
 
