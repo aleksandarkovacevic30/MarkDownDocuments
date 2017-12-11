@@ -43,8 +43,9 @@ After associating a libref with a permanent library, you can write a **PROC PRIN
 
 In an interactive SAS session, a libref remains in effect until you cancel it, change it, or end your SAS session. To cancel a libref, you submit a LIBNAME statement with the CLEAR option.
 
+```sas
     LIBNAME libref CLEAR;
-
+```
 
 ## Examining SAS Data Sets
 
@@ -57,8 +58,10 @@ There are two types of variables: character and numeric.
 
 Other attributes include formats, informats, and labels. You can use PROC CONTENTS to browse the descriptor portion of a data set.
 
+```sas
     PROC CONTENTS DATA=libref.SAS-data-set;
     RUN;
+```
 
 The **data portion** contains the data values. Data values are either character or numeric. 
 
@@ -79,31 +82,41 @@ SAS variable and data set names must be
 
 #### Accessing a SAS Library
 
+```sas
     %let path=filepath;
     libname orion "&path";
+```
 
 #### Browsing a Library
 
+```sas
     proc contents data=orion._all_;
     run;
 
     proc contents data=orion._all_ nods;
     run;
+```
 
 #### Viewing a Data Set with PROC PRINT
 
+```sas
     proc print data=orion.country;
     run;
- 
+ ```
+
 #### Viewing the Descriptor Portion of a Data Set
 
+```sas
     proc contents data=orion.sales;
     run;
+```
 
 #### Viewing the Data Portion of a SAS Data Set
 
+```sas
     proc print data=orion.sales;
     run;
+```
 
 ## Subsetting Report Data
 
@@ -111,18 +124,24 @@ You can use the **VAR** statement in a PROC PRINT step to **subset the variables
 
 You can use the **SUM** statement in a PROC PRINT step to calculate and display report totals for the requested numeric variables.
 
+```sas
     PROC PRINT DATA=SAS-data-set; 
             VAR variable(s); 
             SUM variable(s); 
     RUN;
+```
 
 The **WHERE** statement in a PROC PRINT step subsets the observations in a report. When you use a WHERE statement, the output contains only the observations that meet the conditions specified in the WHERE expression. 
 
+```sas
     WHERE where-expression;
+```
 
 You can use the **ID** statement in a PROC PRINT step to specify a variable to print at the beginning of the row instead of an observation number. The variable that you specify replaces the Obs column.
 
+```sas
     ID variable(s);
+```
 
 ## Sorting and Grouping Report Data
 
@@ -138,21 +157,27 @@ By default, SAS sorts in ascending order, but you can use the keyword DESCENDING
 
 *Remember that the input data set must be sorted on the variables specified in the BY statement.*
 
+```sas
     PROC SORT DATA=input-SAS-data-set
         <OUT=ouput-SAS-data-set>;
         BY <DESCENDING> by-variable(s);
     RUN;
-
+```
 
 ## Enhancing Reports
 
+```sas
     TITLEn 'text';
     FOOTNOTEn 'text';
+```
 
 n=1..10
 
+```sas
     TITLE;
     FOOTNOTE;
+```
+
 cancel all the previous Title definition, and footnotes.
 
 Use the LABEL statement in a PROC PRINT step to define temporary labels to display in the report instead of variable names. 
@@ -161,21 +186,22 @@ Labels can be up to 256 characters in length.
 
 Use the **LABEL** option or **SPLIT=** option in the PROC PRINT statement to tell SAS to display the labels. The **SPLIT=** option specifies a split character to control line breaks in column headings.
 
+```sas
     PROC PRINT DATA=SAS-data-set LABEL; 
             LABEL variable='label'
                          variable='label'
                         ... ;
     RUN;
 
-
     SPLIT='split-character';
- 
+``` 
 
 
 ### Sample Programs
 
 #### Selecting Observations
 
+```sas
     proc print data=orion.sales noobs;
        var Last_Name First_Name Salary Country;
        where Country='AU' 
@@ -188,9 +214,11 @@ Use the **LABEL** option or **SPLIT=** option in the PROC PRINT statement to tel
            Customer_Group Customer_Age_Group
            Customer_Type;
     run;
+```
 
 #### Grouping Observations in Reports
 
+```sas
     proc sort data=orion.sales          
               out=work.sales2;   
        by Country descending Salary;
@@ -198,9 +226,11 @@ Use the **LABEL** option or **SPLIT=** option in the PROC PRINT statement to tel
     proc print data=work.sales2;
        by Country;
     run;
+```
 
 #### Displaying Labels in a Report
 
+```sas
     title1 'Orion Star Sales Staff';
     title2 'Salary Report';
     footnote1 'Confidential';
@@ -212,12 +242,15 @@ Use the **LABEL** option or **SPLIT=** option in the PROC PRINT statement to tel
     run;
     title;
     footnote;
+```
 
 ## Formatting Data Values
 
 Using SAS Formats
 
+```sas
     FORMAT variable(s) format;
+```
 
 SAS stores date values as the number of days between January 1, 1960, and a specific date. 
 
@@ -265,12 +298,14 @@ Names for **numeric formats** must begin with a letter or underscore, followed b
 
 You use a VALUE statement in a PROC FORMAT step to specify the way that you want the data values to appear in your output.
 
+```sas
     PROC FORMAT;
             VALUE format-name 
               value-or-range1='formatted-value1'
               value-or-range2='formatted-value2'
               ...;
     RUN;
+```
 
 The **LOW** and **HIGH** keywords are used to define a continuous range when the lowest and highest values are not known. 
 
@@ -281,6 +316,7 @@ The **LOW** and **HIGH** keywords are used to define a continuous range when the
 
 #### Specifying a User-Defined Format for a Character Variable
 
+```sas
     proc format;
        value tiers low-<50000='Tier1'
                    50000-100000='Tier2'
@@ -303,19 +339,19 @@ The **LOW** and **HIGH** keywords are used to define a continuous range when the
               Birth_Date Hire_Date monyy7.
               Country $ctryfmt.;
     run;
-
+```
 
 ## Reading SAS Data Sets
 
 You use the WHERE statement to subset the input data set by selecting only the observations that meet a particular condition. To subset based on a SAS date value, you can use a SAS date constant in the WHERE expression. SAS automatically converts a date constant to a SAS date value.
 
+```sas
     DATA output-SAS-data-set;
            SET input-SAS-data-set;
            WHERE where-expression; 
     RUN;
 
-
-    variable=expression;
+```
 
 ### Customizing a SAS Data Set
 
@@ -325,8 +361,10 @@ You can use a DROP statement to list the variables to exclude from the new data 
 
 If you use a KEEP statement, you must include every variable to be written, including any new variables.
 
+```sas
     DROP variable-list;
     KEEP variable-list;
+```
 
 **WHERE** statement you can use **ONLY** for variables that are defined in the input data set. Where statement is more efficient as it subsets the input data.
 
@@ -334,7 +372,9 @@ If you use a KEEP statement, you must include every variable to be written, incl
 
 *Remember that, although IF expressions are similar to WHERE expressions, you cannot use special WHERE operators in IF expressions.*
 
+```sas
     IF expression;
+```
 
 To **subset observations** in a **PROC** step, you **MUST** use a WHERE statement. You **cannot** use a subsetting IF statement in a PROC step. 
 
@@ -342,16 +382,19 @@ To **subset observations** in a **PROC** step, you **MUST** use a WHERE statemen
 
 Using a FORMAT statement in a DATA step permanently associates formats with variables. 
 
+```sas
     LABEL variable='label'
                 variable='label'
                   ... ;
 
     FORMAT variable(s) format ...;
+```
 
 ### Sample Programs
 
 #### Subsetting Variables in a DATA Step: DROP and KEEP
 
+```sas
     data work.subset1;
        set orion.sales;
        where Country='AU' and
@@ -376,20 +419,24 @@ Using a FORMAT statement in a DATA step permanently associates formats with vari
     run;
     proc print data=work.subset1;
     run;
-
+```
 
 ## Reading Spreadsheet and Database Data
 
 ### Reading Spreadsheet Data
 
+```sas
     LIBNAME libref <engine> 
         "workbook-name" <options>;
     LIBNAME libref <engine> 
         <PATH=> "workbook-name" <options>;
+```
 
 In order to address Sheet within the spreadsheet, you do it like this:
 
+```sas
     libref.'worksheetname$'n
+```
 
 When you assign a libref to an Excel workbook in SAS, the workbook cannot be opened in Excel. To disassociate a libref, you submit a LIBNAME statement specifying the libref and the CLEAR option. SAS disconnects from the data source and closes any resources that are associated with the connection.
 
@@ -397,27 +444,34 @@ When you assign a libref to an Excel workbook in SAS, the workbook cannot be ope
 
 You can also read database tables as if they were SAS data sets by using the LIBNAME statement supported by SAS/ACCESS Interface to Oracle. This SAS/ACCESS LIBNAME statement includes a libref, an engine name, and additional connection options that are site- and installation-specific. After you submit the LIBNAME statement, SAS treats the Oracle database as if it were a SAS library, and any table in the database can be referenced using a SAS two-level name, as if it were a SAS data set.
 
+```sas
     LIBNAME libref engine <SAS/ACCESS Oracle options>;
+```
 
 ### Sample Programs
 
 #### Accessing Excel Worksheets in SAS
 
+```sas
     libname orionx pcfiles path="&path/sales.xls";
     proc contents data=orionx._all_;
     run;
+```
 
 #### Printing an Excel Worksheet
 
+```sas
     proc print data=orionx.'Australia$'n;
     run;
     proc print data=orionx.'Australia$'n noobs;
        where Job_Title ? 'IV';
        var Employee_ID Last_Name Job_Title Salary;
     run;
+```
 
 #### Creating a SAS Data Set from an Excel Worksheet
 
+```sas
     libname orionx pcfiles path="&path/sales.xls";
     data work.subset;
        set orionx.'Australia$'n;
@@ -429,6 +483,7 @@ You can also read database tables as if they were SAS data sets by using the LIB
               Bonus comma8.2;
     run;
     libname orionx clear;
+```
 
 ## Reading Raw Data Files
 
@@ -439,12 +494,14 @@ The **INPUT** statement tells SAS how to read the values, and specifies the name
 
 *With list input, the default length for all variables is 8 bytes, regardless of type.*
 
+```sas
     DATA output-SAS-data-set-name;
             INFILE 'raw-data-file-name' 
                 DLM='delimiter';
             INPUT variable1 <$> variable2 <$> 
                 ... variableN <$>;
     RUN; 
+```
 
 SAS processes the DATA step in two phases: *compilation* and *execution*. 
 
@@ -458,7 +515,9 @@ It scans the input buffer from non-delimiter to delimiter and assigns each value
 
 You can use a **LENGTH** statement before the INPUT statement in a DATA step to explicitly define the length of character variables. Numeric variables can be included in the LENGTH statement to preserve the order of variables, but you need to specify a length of 8 for each numeric variable.
 
+```sas
     LENGTH variable(s) <$> length;
+```
 
 ### Reading Nonstandard Delimited Data
 
@@ -468,7 +527,9 @@ When SAS reads character data, a standard character informat, such as $12., is o
 
 The **colon format modifier** tells SAS to ignore the specified length when it reads data values, and instead to read only until it reaches a delimiter. Omitting the colon format modifier is likely to result in data errors.
 
+```sas
     INPUT variable <$> variable <:informat>;
+```
 
 An informat is required to read nonstandard numeric data, such as calendar dates, and numbers with dollar signs and commas. Many SAS informats are available for nonstandard numeric values. Every informat has a width, whether stated explicitly or set by default.
 
@@ -480,11 +541,13 @@ You must use a subsetting IF statement to select observations, because the varia
 
 You can use **LABEL** and **FORMAT** statements to permanently store label and format information in the new data set.
 
+```sas
     DATALINES;
     <data line 1>
     <data line 2>
     ...
     ;
+```
 
 ### Validating Data
 
@@ -494,13 +557,16 @@ You can use the **DSD** option in the **INFILE** statement if data values are mi
 
 If you have missing data values at the end of a record, you can use the **MISSOVER** option in the INFILE statement. SAS sets the variable values to missing.
 
+```sas
     INFILE 'raw-data-file-name' 
         <DLM=> <DSD> <MISSOVER>;
+```
 
 ### Sample Programs
 
 #### Specifying the Lengths of Variables Explicitly
 
+```sas
     data work.sales2;
        length Employee_ID  8 First_Name $ 12
               Last_Name $ 18 Gender $ 1 
@@ -514,9 +580,11 @@ If you have missing data values at the end of a record, you can use the **MISSOV
     run;
     proc print data=work.sales2;
     run;
+```
 
 #### Specifying Informats in the INPUT Statement
 
+```sas
     data work.sales2;
        infile "&path/sales.csv" dlm=',';
        input Employee_ID First_Name :$12. 
@@ -526,9 +594,11 @@ If you have missing data values at the end of a record, you can use the **MISSOV
     run; 
     proc print data=work.sales2;
     run;
+```
 
 #### Reading Instream Data
 
+```sas
     data work.newemps;
        input First_Name $ Last_Name $  
              Job_Title $ Salary :dollar8.;
@@ -550,9 +620,11 @@ If you have missing data values at the end of a record, you can use the **MISSOV
     ;
     proc print data=work.newemps2;
     run; 
+```
 
 ### Reading a Raw Data File That Contains Missing Data
 
+```sas
     data work.contacts;
        length Name $ 20 Phone Mobile $ 14;
        infile "&path/phone2.csv" dsd;
@@ -560,9 +632,11 @@ If you have missing data values at the end of a record, you can use the **MISSOV
     run;
     proc print data=work.contacts noobs;
     run;
+```
 
 #### Reading a Raw Data File Using the MISSOVER Option
 
+```sas
     data work.contacts2;
        infile "&path/phone.csv" dlm=',' missover; 
        input Name $ Phone $ Mobile $;
@@ -576,6 +650,7 @@ If you have missing data values at the end of a record, you can use the **MISSOV
     run;
     proc print data=contacts2 noobs;
     run;
+```
 
 ## Manipulating Data
 
@@ -583,19 +658,24 @@ If you have missing data values at the end of a record, you can use the **MISSOV
 
 You use an assignment statement in a DATA step to evaluate an expression and assign the result to a new or existing variable. The expression on the right side of an assignment statement can include calls to SAS functions. A SAS function is a routine that accepts arguments and returns a value.
 
+```sas
     variable=expression;
+```
 
 The SUM function, a descriptive statistics function, returns the sum of its arguments and ignores missing values. The arguments can be numeric constants, numeric variables, or arithmetic expressions, but the arguments must be numeric values and must be enclosed in parentheses and separated with commas. The parentheses are required, even if no arguments are passed to the function.
 
+```sas
     SUM(argument1,argument2, ...)
 
     MONTH(SAS-date)
     YEAR(SAS-date)
     DAY(SAS-date)
         TODO: add more functions used within practice
+```
 
 ### Conditional Processing
 
+```sas
     IF expression THEN 
           DO;
                 executable statements
@@ -604,6 +684,7 @@ The SUM function, a descriptive statistics function, returns the sum of its argu
           DO;
                 executable statements
     END;
+```
 
 *Truncation can occur when new variables are assigned values within conditional program statements. During compilation, SAS creates a variable in the PDV the first time it encounters the variable in the program. If this is in conditional code, be sure that it is created with a length long enough to store all possible values. It is a best practice to use a LENGTH statement to explicitly define the length.*
 
@@ -612,6 +693,7 @@ The SUM function, a descriptive statistics function, returns the sum of its argu
 
 #### Creating Variables by Using Functions
 
+```sas
     data work.comp;
        set orion.sales;
        Bonus=500;
@@ -622,9 +704,11 @@ The SUM function, a descriptive statistics function, returns the sum of its argu
        var Employee_ID First_Name Last_Name 
            Salary Bonus Compensation BonusMonth;
     run;
+```
 
 #### Using Compound Conditions
 
+```sas
     data work.comp;
        set orion.sales;
        Freq='Once a Year';
@@ -645,11 +729,13 @@ The SUM function, a descriptive statistics function, returns the sum of its argu
     proc print data=work.comp;
        var Last_Name Job_Title Bonus;
     run;
+```
 
 ## Combining SAS Data Sets
 
 ### Concatenating Data Sets
 
+```sas
     DATA SAS-data-set;
            SET SAS-data-set1 
               SAS-data-set2(RENAME=(oldName1=newName1;
@@ -658,6 +744,7 @@ The SUM function, a descriptive statistics function, returns the sum of its argu
                             old-name-n=new-name-n))
                                  ...;
     RUN;
+```
 
 This dataset would **combine two dataset vertically**. In the **compilation phase** it would create PDV out of all variables that are existing. In the **execution phase**, it will store values from SAS-data-set1 and then from SAS-data-set2. All non-existent values will be filled as missing value.  
 
@@ -672,12 +759,13 @@ In order to **combine two datasets horizontally**, you can use **MERGE** stateme
 
 The **BY** statement indicates a match-merge and specifies the common variable or variables to match. The **BY** variables must exist in every data set, and each data set **MUST be sorted** by the value of the BY variables.
 
+```sas
     DATA SAS-data-set;
            MERGE SAS-data-set1 SAS-data-set2 ...;
            BY <DESCENDING> BY-variable(s);
            <additional SAS statements>
     RUN;
-
+```
 
 ### Merging SAS Data Sets That Have Non-Matches
 
@@ -687,12 +775,15 @@ You can use the **IN=** data set option in a MERGE statement to create a **tempo
 
 The IN= variables have two possible values: 0 and 1. 
 
+```sas
     MERGE SAS-data-set1 <(IN=variable)>...
+```
 
 ### Sample Programs
 
 #### Merging Data Sets One-to-One
 
+```sas
     /* Create Data */
     data empsau;
        input First $ Gender $ EmpID;
@@ -717,9 +808,11 @@ The IN= variables have two possible values: 0 and 1.
     run;
     proc print data=empsauh;
     run;
+```
 
 #### Selecting Non-Matches
 
+```sas
     /* Create Data */
     data empsau;
        input First $ Gender $ EmpID;
@@ -746,7 +839,7 @@ The IN= variables have two possible values: 0 and 1.
     run;
     proc print data=empsauc2;
     run;
-
+```
 
 ## Creating Summary Reports
 
@@ -754,10 +847,12 @@ The IN= variables have two possible values: 0 and 1.
 
 You can use PROC FREQ to produce frequency tables that report the distribution of any or all variable values in a SAS data set. You use the TABLES statement to specify the frequency tables to produce.
 
+```sas
     PROC FREQ DATA=SAS-data-set <optionFreq(s)>;
            TABLES variable(s) </optionTable(s)>;
            <additional SAS statements>
     RUN;
+```
 
 optionFreq:
 
@@ -795,12 +890,15 @@ TABLES statement: It creates a one-way frequency table for each variable.
 
 #### Place the proc freq result into a sas dataset
 
+```sas
     proc freq data=orion.order_fact;
         tables Product_ID /out=work.bla noprint;
     run;
+```
 
 #### Using Formats in PROC FREQ
 
+```sas
     proc format;
        value Tiers low-25000='Tier1'
                    25000<-50000='Tier2'
@@ -811,9 +909,11 @@ TABLES statement: It creates a one-way frequency table for each variable.
        tables Salary;
        format Salary Tiers.;
     run;
+```
 
 #### Listing Multiple Variables on a TABLES Statement
 
+```sas
     proc freq data=orion.sales;
        tables Gender Country;
     run;
@@ -824,15 +924,19 @@ TABLES statement: It creates a one-way frequency table for each variable.
        tables Gender; 
        by Country;
     run;
+```
 
 #### Creating a Crosstabulation Table
 
+```sas
     proc freq data=orion.sales;
        tables Gender*Country;
     run;
+```
 
 #### Using PROC FREQ Options to Validate Your Data
 
+```sas
     proc freq data=orion.nonsales2 order=freq;
        tables Employee_ID/nocum nopercent;
     run;
@@ -844,9 +948,11 @@ TABLES statement: It creates a one-way frequency table for each variable.
        tables Gender Country Employee_ID/nocum 
             nopercent noprint;
     run;
+```
 
 #### Using PROC PRINT to Validate Your Data
 
+```sas
     proc print data=orion.nonsales2 (obs=20);
        where Gender not in ('F','M') or
              Country not in ('AU','US') or
@@ -855,7 +961,7 @@ TABLES statement: It creates a one-way frequency table for each variable.
              Employee_ID is missing or
              Employee_ID=120108;
     run;
-
+```
 
 ### Using the MEANS and UNIVARIATE Procedures
 
@@ -874,10 +980,12 @@ You can use a **CLASS** statement to request statistics for groups of observatio
 
 *The variables listed in the CLASS statement are called* **classification variables**, *or class variables, and each combination of class variable values is called a* **class level.**
 
+```sas
     PROC MEANS DATA=SAS-data-set <statistic(s)>;
            VAR analysis-variable(s);
            CLASS classification-variable(s);
     RUN;
+```
 
 statistics: 
 * **N** - show number of observations
@@ -893,9 +1001,11 @@ You can use **PROC MEANS** to validate a data set. The MIN, MAX, and NMISS stati
 
 **PROC UNIVARIATE** can be more useful because it displays the extreme observations, or outliers. By default, it displays the five highest and five lowest values of the analysis variable, and the number of the observation with each extreme value. You can use the **NEXTROBS=** option to display a different number of extreme observations.
 
+```sas
     PROC UNIVARIATE DATA=SAS-data-set;
            VAR variable(s);
     RUN;
+```
 
 * **NONOBS** - Suppress reporting the total number of observations for each unique  combination of the class variables
 * **NOPRINT** - Suppress all displayed output   
@@ -904,28 +1014,35 @@ You can use **PROC MEANS** to validate a data set. The MIN, MAX, and NMISS stati
 
 #### output proc means to dataset
 
+```sas
     proc means data=orion.order_fact noprint;
        class Product_ID;
        var Total_Retail_Price;
        output out=product_orders 
             sum(Total_Retail_Price)=Product_Revenue;
     run;
+```
 
 #### Creating a Summary Report with PROC MEANS
 
+```sas
     proc means data=orion.sales;
        var Salary;
     run;
+```
 
 #### Creating a PROC MEANS Report with Grouped Data
 
+```sas
     proc means data=orion.sales;
        var Salary;
        class Gender Country;
     run;
+```
 
 #### Requesting Specific Statistics in PROC MEANS
 
+```sas
     proc means data=orion.sales n mean;
        var Salary;
     run;
@@ -933,15 +1050,19 @@ You can use **PROC MEANS** to validate a data set. The MIN, MAX, and NMISS stati
        var Salary;
        class Gender Country;
     run;
+```
 
 #### Validating Data Using PROC MEANS
 
+```sas
     proc means data=orion.nonsales2 n nmiss min max;
        var Salary;
     run;
+```
 
 #### Validating Data Using PROC UNIVARIATE
 
+```sas
     proc univariate data=orion.nonsales2;
        var Salary;
     run;
@@ -952,7 +1073,7 @@ You can use **PROC MEANS** to validate a data set. The MIN, MAX, and NMISS stati
        var Salary;
        id Employee_ID;
     run;
-
+```
 
 | Procedure | Numeric | Character | Method |
 |-----------------------|---------|-----------|---------------------------------------------|
@@ -969,14 +1090,17 @@ You can use **PROC MEANS** to validate a data set. The MIN, MAX, and NMISS stati
 
 You can use the SAS Output Delivery System to create different output formats by directing output to various ODS destinations. 
 
+```sas
     ODS destination FILE="filename" <options>;
           <SAS code to generate the report>
     ODS destination CLOSE; 
+```
 
 ### Sample Programs
 
 #### Using the SAS Output Delivery System
 
+```sas
     ods pdf file="c:/output/salaries.pdf";
     proc means data=orion.sales min max sum;
        var Salary;
@@ -989,18 +1113,20 @@ You can use the SAS Output Delivery System to create different output formats by
        class Gender Country;
     run;
     ods csv close;
-
+```
 
 
 ## Controlling Input and Output
 
 ### Writing to Multiple SAS Data Sets
 
+```sas
     SELECT <(select-expression)>;
     WHEN-1 (when-expression -1 <…, when-expression-n>) statement;
     WHEN-n (when-expression -1 <…, when-expression-n>) statement;
     <OTHERWISE statement;>
     END;
+```
 
 * When a SELECT expression is specified, SAS evaluates the SELECT expression and compares that value to each WHEN expression and returns either a true or false.
 * If no SELECT expression is specified, SAS evaluates each WHEN expression in order until it finds a true expression. If no WHEN expression is true, SAS executes the OTHERWISE statement if one is present.
@@ -1009,9 +1135,11 @@ You can use the SAS Output Delivery System to create different output formats by
 
 ### Controlling Variable Input and Output
 
+```sas
     SAS-data-set-name (DROP=variable(s)) 
     SAS-data-set-name (KEEP=variable(s))
-￼
+￼```
+
 * When the **DROP=** and **KEEP=** data set options are used in the **SET** statement, the variables are not processed and are not available in the program data vector.
 * When the **DROP=** and **KEEP=** data set options are used in the **DATA** statement, they affect the variables in the output data set they are associated with.
 * **DROP** and **KEEP** statements affect **all** output data sets listed in the DATA statement.
@@ -1019,27 +1147,33 @@ You can use the SAS Output Delivery System to create different output formats by
 
 ### Controlling Observation Input and Output
 
+```sas
     SAS-data-set-name (OBS=n)
     SAS-data-set-name (FIRSTOBS=n)
-￼
+```
+
 * The **OBS=** data set option specifies the **number of the last observation** to process. It does **not** specify **how many** observations should be processed.
 * The **FIRSTOBS=** data set option specifies a **starting point** for processing an input data set. By **default**, **FIRSTOBS=1**.
 * **FIRSTOBS=** and **OBS=** can be used in a procedure step to limit the number of observations that are processed. If a **WHERE** statement is used to subset the observations, it **is applied before the data set options**.
 * **(OBS - FIRSTOBS) + 1 = Number of Results**
 
+```sas
     data australia;
        set orion.employee_addresses
           (firstobs=50 obs=100);
        if Country='AU' then output;
     run;
+```
 
 *takes from orion.employee_addresses only observation from 50-100, totalling 51 observations.*
 
+```sas
     proc print data=orion.employee_addresses
                (obs=10);
        where Country='AU';
        var Employee_Name City State Country;
     run;
+```
 
 *shows the observation from firstobs=1 (default) to obs=10... first ten observations*
 
@@ -1047,37 +1181,47 @@ You can use the SAS Output Delivery System to create different output formats by
 
 ### Creating an Accumulating Variable Using the RETAIN Statement
 
+```sas
     RETAIN variable-name <initial-value> ...;
+```
 
 * The **RETAIN** statement is a **compile-time-only** statement that **prevents SAS** from **reinitializing the variable** at the **top of the DATA step**. Because the variable is not reinitialized, it retains its value across multiple iterations of the DATA step.
 * If you **don't specify an initial value**, the **RETAIN** statement **initializes** the variable to **missing** before the first execution of the DATA step.
 
+```sas
     data mnthtot2;
        set orion.aprsales;
        retain Mth2Dte 0;
        Mth2Dte=Mth2Dte+SaleAmt;
     run;
+```
 
 ### Creating an Accumulating Variable Using the Sum Statement
 
+```sas
     variable+expression;
+```
 
 As an **alternative** to using the **RETAIN** statement with an assignment statement, you can use the sum statement. 
 
 **By default**, the sum statement **initializes** the variable **to 0** and retains the variable. It also **ignores missing input values** from the expression.
 
+```sas
     data mnthtot2;
        set orion.aprsales;
        Mth2Dte+SaleAmt;
     run;
+```
 
 ### Using BY-Group Processing: Summarizing Data by Groups
 
+```sas
     DATA output-SAS-data-set; 
         SET input-SAS-data-set; 
         BY BY-variable ...;
         <additional SAS statements> 
     RUN;
+```
 
 * The BY statement creates two temporary variables (FIRST.variable and LAST.variable) for each BY variable listed. These variables identify the first and last observation in each BY group.
 * You can use the FIRST. and LAST. variables in a DATA step to summarize the grouped data.
@@ -1087,6 +1231,7 @@ As an **alternative** to using the **RETAIN** statement with an assignment state
 
 sample : the following code outputs the total salaries for each department
 
+```sas
     data deptsals (keep=Dept DeptSal);
        set SalSort;
        by Dept;
@@ -1094,6 +1239,7 @@ sample : the following code outputs the total salaries for each department
        DeptSal+Salary;
        if Last.Dept;
     run;
+```
 
 ### Using BY-Group Processing: Summarizing Data by Multiple Groups
 
@@ -1103,6 +1249,7 @@ sample : the following code outputs the total salaries for each department
 
 sample 2: 
 
+```sas
     data deptsals (keep=Proj Dept DeptSal NumEmps);
        set projsort;
        by Proj Dept;
@@ -1115,6 +1262,7 @@ sample 2:
        NumEmps+1;
        if Last.Dept;
     run;
+```
 
 | Proj | Dept   | FIRST.Proj | FIRST.Dept | LAST.Proj | LAST.Dept |
 |------|--------|------------|------------|-----------|-----------|
@@ -1128,7 +1276,9 @@ sample 2:
 
 ### Using Column Input
 
+```sas
     INPUT variable <$> startcol-endcol . . . ;
+```
 
 * You can use column input to read input data that is arranged in columns or fixed fields. To use column input your data must be standard data in fixed columns.
 * **Standard data** is data that SAS can read without special instructions. 
@@ -1136,11 +1286,13 @@ sample 2:
 
 ### Using Formatted Input
 
+```sas
     INPUT column-pointer-control variable informat . . . ;
 
     INPUT @n variable informat . . . ;
 
     INPUT +n variable informat . . . ;
+```
 
 * You can use **formatted input** to read **both** standard and nonstandard data that is arranged in fixed fields.
 * An informat is the special instruction that specifies how SAS reads raw data.
@@ -1149,6 +1301,7 @@ sample 2:
 
 Sample:
 
+```sas
     data work.discounts;
     infile 'my-file-path\offers.dat'; 
     input @1 Cust_type 4.
@@ -1158,27 +1311,32 @@ Sample:
     run;
     proc print data=work.discounts;
     run;
-
+```
 
 ### Creating a Single Observation from Multiple Records
 
 You can use multiple INPUT statements to read a group of records in a raw data file as a single observation in a new data set.
 
+```sas
     DATA SAS-data-set;
         INFILE 'raw-data-file-name';
         INPUT specifications;
         INPUT specifications;
     <additional SAS statements>
+```
 
 As an alternative to writing multiple INPUT statements, you can write one INPUT statement that contains line pointer controls to specify the record(s) from which values are to be read. There are two line pointer controls, the **forward slash** (a relative line pointer control) and the **#n** (an absolute line pointer control).
 
+```sas
     DATA SAS-data-set;
         INFILE 'raw-data-file-name';
         INPUT specifications /
         #n specifications; <additional SAS statements>
+```
 
 Sample:
 
+```sas
     data contacts;
         infile 'my-file-path\address.dat'; input FullName $30.;
         input;
@@ -1187,10 +1345,13 @@ Sample:
         run;
     proc print data=work.contacts;
     run;
+```
 
 ### Controlling When a Record Loads
 
+```sas
     INPUT specifications . . . @ ;
+```
 
 * By **default**, **each INPUT** statement in a DATA step **reads a new data record** into the **input buffer**.
 * You can use a **line-hold specifier**, the single trailing **@**, to prevent the second INPUT statement in a DATA step from moving to the second line in a raw data file. When you use the trailing @, the pointer position doesn't change and a new record isn't loaded in the input buffer when a subsequent input statement executes.
@@ -1200,6 +1361,7 @@ Sample:
 
 Sample:
 
+```sas
     data salesQ1;
         infile 'my-file-path\sales.dat'; input SaleID $4. @6 Location $3. @; if Location='USA' then
           input @10 SaleDate mmddyy10.
@@ -1210,10 +1372,13 @@ Sample:
     run;
     proc print data=salesQ1;
     run;
+```
 
 ### Reading Raw Data with Missing Values
 
+```sas
     INFILE 'raw-data-file' MISSOVER;
+```
 
 * By **default**, the **DATA step** looks in the **next record** if the **end of the current record** is encountered **before** all of the **variables are assigned** values. This default action is known as the **FLOWOVER** option.
 * You can override the **FLOWOVER** option by using the **MISSOVER** option, which **causes** the **DATA step** to **assign missing values** to any variables that do not have values in the PDV when the end of a record is reached.
@@ -1221,14 +1386,18 @@ Sample:
 
 However,
 
+```sas
     INFILE 'raw-data-file' DSD;
+```
 
 The **DSD** option sets the **default delimiter** to a **comma**, treats **consecutive delimiters** as **missing values**, and **enables SAS** to **read values** with **embedded delimiters** if the value is surrounded by **quotation marks**.
 
 ### Creating Multiple Observations from a Single Record
 
+```sas
     INPUT specifications @@;
     INFILE 'raw-data-file' DSD;
+```
 
 You can use the the **double trailing @@**, which is a **line pointer control**, to **hold a record across iterations** of the DATA step. The double trailing @@ should only be used with list input and **should not be used** with the **MISSOVER** option.
 
@@ -1238,6 +1407,7 @@ A record that is being held by the double trailing @@ is **not released until**
 
 Sample:
 
+```sas
     data donate07;
         length ID $ 4;
         infile 'my-file-path\charity.dat'; 
@@ -1245,6 +1415,7 @@ Sample:
     run;
     proc print data=work.donate07;
     run;
+```
 
 ## Manipulating Character Values
 
@@ -1309,10 +1480,12 @@ Sample:
 
 ### Truncating Numeric Values
 
+```sas
     ROUND(argument<,round-off-unit>)
     CEIL(argument)
     FLOOR(argument)
     INT(argument)
+```
 
 * The **ROUND** function returns a value rounded to the nearest multiple of the round-off unit. If you don't specify a round-off unit, the argument is rounded to the nearest integer.
 * The **CEIL** function returns the smallest integer greater than or equal to the argument. 
@@ -1325,34 +1498,44 @@ You can allow SAS to automatically convert data to a different data type for you
 
 By default, if you reference a character variable in a numeric context, SAS tries to convert the variable values to numeric. Automatic conversion uses the w. informat, and it produces a numeric missing value from any character value that does not conform to standard numeric notation.
 
+```sas
     INPUT(source, informat)
+```
 
 You can use the **INPUT** function to explicitly **convert character** values **to numeric** values. The INPUT function returns the value that is produced when the source is read with a specified informat.
 
 Numeric data values are automatically converted to character values whenever they are used in a character context. SAS writes the numeric value with the **BEST12.** format and **right aligns** the value. The resulting value might contain leading blanks.
 
+```sas
     PUT(source, format)
+```
 
 **PUT** function is used to explicitly control the **numeric-to-character** conversion using a format.
 
 ## Debugging Techniques
 
+```sas
     PUTLOG <specifications>;
     PUTLOG 'text';
     PUTLOG variable-name=;
     PUTLOG variable-name=format-namew.; 
     PUTLOG _ALL_;
+```
 
 *To write the current contents of the PDV to the log, use the _ALL_ option in the PUTLOG statement. When you use the _ALL_ option, the values of the automatic variables _ERROR_ and _N_ are included in the log.*
 
+```sas
     SET SAS-data-set END= variable <options>;
     INFILE 'raw-data-file' END= variable <options>;
+```
 ￼
 You can use the **END=** option in the SET statement to create and name a temporary variable that acts as an end-of-file indicator. You can also use the END= option in an INFILE statement to indicate the end of a raw data file.
 
 ### Using the DATA Step Debugger
 
+```sas
     DATA data-set-name/DEBUG;
+```
 
 * You can also debug logic errors by using the DATA step debugger. This tool consists of windows and a group of commands. By issuing commands, you can execute DATA step statements one by one and pause to display the resulting variable values in a window. By observing the results that are displayed, you can determine where the logic error occurs.
 * The DATA Step Debugger can only be used in an interactive session. To invoke the debugger, you use the DEBUG option in the DATA statement. Because the debugger is interactive, you can repeat the process of issuing commands and observing results as many times as you need during a single debugging session.
@@ -1362,6 +1545,7 @@ You can use the **END=** option in the SET statement to create and name a tempor
 
 ### Constructing a Simple DO Loop
 
+```sas
     DO index-var=start TO stop <BY increment>;
         iterated SAS statements...
     END;
@@ -1369,6 +1553,7 @@ You can use the **END=** option in the SET statement to create and name a tempor
     DO index-var=item-1 <,... item-n>; 
         iterated SAS statements...
     END;
+```
 
 * An iterative DO loop executes the statements between the DO statement and the END statement repetitively.
 * If you do not specify an increment for a DO loop, the increment defaults to 1.
@@ -1377,6 +1562,7 @@ You can use the **END=** option in the SET statement to create and name a tempor
 
 ### Conditionally Executing DO Loops
 
+```sas
     DO UNTIL (expression); 
         iterated SAS statements...
     END;
@@ -1385,11 +1571,11 @@ You can use the **END=** option in the SET statement to create and name a tempor
         iterated SAS statements...
     END;
 
-
     DO index-var=start TO stop <BY increment> 
         UNTIL | WHILE (expression);
         iterated SAS statements...
     END;
+```
 
 * In a **DO UNTIL** loop, SAS evaluates the expression at the bottom of the loop after each iteration.
 * In a **DO WHILE** loop, SAS evaluates the condition at the top of the loop and executes the statements within the loop if the condition is true.
@@ -1406,7 +1592,9 @@ You can use the **END=** option in the SET statement to create and name a tempor
 
 ### Creating SAS Arrays
 
+```sas
     ARRAY array-name {dimension} <array-elements>;
+```
 
 * dimension describes the number and arrangement of elements in the array. The default dimension is one. The array dimension must be enclosed in braces, parentheses, or brackets. It is best to use braces or brackets so that there is no confusion with functions.
 * You can use an asterisk to indicate the dimension of a one-dimensional array. When you use an asterisk, SAS determines the dimension of the array by counting the variables in the list of array elements. You can list each variable name separated by a space, or you can use a numbered range list or name range list specification.
@@ -1415,7 +1603,9 @@ You can use the **END=** option in the SET statement to create and name a tempor
 
 **DIM** returns number of elements in the array:
 
+```sas
     DIM(array-name)
+```
 
 ## TRICKY THINGS
 
@@ -1445,13 +1635,17 @@ informats - how to read
 
 When in **DATA** step, 
 
+```sas
     C = A + B
+```
 
 and A is a missing value, then C will be missing value.
 
 BUT when  
 
+```sas
     C = SUM(A,B)
+```
 
 and A is a missing value, then C will be B, as it sums all non-missing values and ignores the missing values.
 
