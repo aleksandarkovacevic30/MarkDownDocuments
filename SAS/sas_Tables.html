@@ -1,0 +1,271 @@
+<h2 id="manipulatingcharactervalues">Manipulating Character Values</h2>
+
+<table>
+<colgroup>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">Function</th>
+	<th style="text-align:left;">Purpose</th>
+	<th style="text-align:left;">Output Size</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;">Var=SUBSTR(string,start&lt;,length&gt;);</td>
+	<td style="text-align:left;">On the right side of an assignment statement, the SUBSTR function extracts a substring of characters from a character string, starting at a specified position in the string.</td>
+	<td style="text-align:left;">Same as input</td>
+</tr>
+<tr>
+	<td style="text-align:left;">LENGTH(argument)</td>
+	<td style="text-align:left;">The LENGTH function returns the length of a character string, excluding trailing blanks.</td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">RIGHT(argument)</td>
+	<td style="text-align:left;">The RIGHT function right-aligns a value. If there are trailing blanks, they are moved to the beginning of the value.</td>
+	<td style="text-align:left;">Same as input</td>
+</tr>
+<tr>
+	<td style="text-align:left;">LEFT(argument)</td>
+	<td style="text-align:left;">The LEFT function left-aligns a character value. If there are leading blanks, they are moved to the end of the value.</td>
+	<td style="text-align:left;">Same as input</td>
+</tr>
+<tr>
+	<td style="text-align:left;">CHAR(string,position)</td>
+	<td style="text-align:left;">The CHAR function returns a single character from a specified position in a character string.</td>
+	<td style="text-align:left;">1</td>
+</tr>
+<tr>
+	<td style="text-align:left;">PROPCASE(argument&lt;,delimiter(s)&gt;)</td>
+	<td style="text-align:left;">The PROPCASE function converts all letters in a value to proper case.</td>
+	<td style="text-align:left;">200</td>
+</tr>
+<tr>
+	<td style="text-align:left;">UPCASE(argument)</td>
+	<td style="text-align:left;">The UPCASE function converts all letters in a value to uppercase.</td>
+	<td style="text-align:left;">Same as input</td>
+</tr>
+<tr>
+	<td style="text-align:left;">LOWCASE(argument)</td>
+	<td style="text-align:left;">The LOWCASE function converts all letters in a value to lowercase.</td>
+	<td style="text-align:left;">Same as input</td>
+</tr>
+<tr>
+	<td style="text-align:left;">SCAN (string,n&lt;,&#8217;delimiter(s)&#8217;&gt;)</td>
+	<td style="text-align:left;">The SCAN function enables you to separate a character value into words and to return the nth word.</td>
+	<td style="text-align:left;">200</td>
+</tr>
+<tr>
+	<td style="text-align:left;">CATX (separator,string1,&#8230;,string-n)</td>
+	<td style="text-align:left;">The CATX function removes leading and trailing blanks, inserts separators, and returns a concatenated character string.</td>
+	<td style="text-align:left;">200</td>
+</tr>
+<tr>
+	<td style="text-align:left;">NewVar=string1 !! string2;</td>
+	<td style="text-align:left;">The concatenation operator joins character strings.</td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">TRIM(argument)</td>
+	<td style="text-align:left;">The TRIM function removes trailing blanks from a character string.</td>
+	<td style="text-align:left;">Same as input</td>
+</tr>
+<tr>
+	<td style="text-align:left;">STRIP(argument)</td>
+	<td style="text-align:left;">The STRIP function removes leading and trailing blanks from a character string.</td>
+	<td style="text-align:left;">Same as input</td>
+</tr>
+<tr>
+	<td style="text-align:left;">CAT(string1,&#8230;,string-n)</td>
+	<td style="text-align:left;">These functions return concatenated character strings. The CAT function does not remove any leading or trailing blanks. The CATT function trims trailing blanks. The CATS function strips leading and trailing blanks.</td>
+	<td style="text-align:left;">200</td>
+</tr>
+<tr>
+	<td style="text-align:left;">CATT(string1,&#8230;,string-n)</td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">CATS(string1,&#8230;,string-n)</td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">FIND (string,substring&lt;,modifiers,start&gt;)</td>
+	<td style="text-align:left;">The FIND function searches for a specific substring of characters within a character string that you specify. The function searches for the first occurrence of the substring and returns the starting position of that substring. If the substring is not found in the string, FIND returns a value of 0.</td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">SUBSTR(string,start&lt;,length&gt;)=value;</td>
+	<td style="text-align:left;">On the left side of the assignment statement, the SUBSTR function replaces characters at a specified position within</td>
+	<td style="text-align:left;">if length is not declaring, default is 8.</td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;">the value.</td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">TRANWRD (source,target,replacement)</td>
+	<td style="text-align:left;">The TRANWRD function replaces or removes all occurrences of a given word (or a pattern of characters) within a</td>
+	<td style="text-align:left;">200</td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;">character string.</td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">COMPRESS (source&lt;,chars&gt;)</td>
+	<td style="text-align:left;">The COMPRESS function removes the</td>
+	<td style="text-align:left;">Same as input</td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;">characters listed in the chars argument</td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;">from the source. If no characters are</td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;">specified, the COMPRESS function</td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;">removes all blanks from the source.</td>
+	<td style="text-align:left;"></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="manipulationnumericvalues">Manipulation Numeric Values</h2>
+
+<table>
+<colgroup>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">Function</th>
+	<th style="text-align:left;">Returns</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;">SUM</td>
+	<td style="text-align:left;">the sum of the nonmissing arguments</td>
+</tr>
+<tr>
+	<td style="text-align:left;">MEAN</td>
+	<td style="text-align:left;">the arithmetic mean (average) of the arguments</td>
+</tr>
+<tr>
+	<td style="text-align:left;">MIN</td>
+	<td style="text-align:left;">the smallest value from the arguments</td>
+</tr>
+<tr>
+	<td style="text-align:left;">MAX</td>
+	<td style="text-align:left;">the largest value from the arguments</td>
+</tr>
+<tr>
+	<td style="text-align:left;">N</td>
+	<td style="text-align:left;">the number of nonmissing arguments</td>
+</tr>
+<tr>
+	<td style="text-align:left;">NMISS</td>
+	<td style="text-align:left;">the number of missing numeric arguments</td>
+</tr>
+<tr>
+	<td style="text-align:left;">CMISS</td>
+	<td style="text-align:left;"></td>
+</tr>
+</tbody>
+</table>
+
+<ul>
+<li>You can list all the variables in the function, or you can use a variable list by preceding the first variable name in the list with the keyword OF.</li>
+</ul>
+
+<table>
+<colgroup>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">Variable List</th>
+	<th style="text-align:left;">Description</th>
+	<th style="text-align:left;">Example</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;">Numbered</td>
+	<td style="text-align:left;">all variables x1 to xn, inclusive</td>
+	<td style="text-align:left;">Total = sum(of Qtr1-Qtr4);</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Range</td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">Name Range</td>
+	<td style="text-align:left;">all variables ordered as they are in the program data vector, from x to a inclusive</td>
+	<td style="text-align:left;">Total = sum(of Qtr1&#8211;Fourth);</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Name Prefix</td>
+	<td style="text-align:left;">all variables that begin with the same string</td>
+	<td style="text-align:left;">Total = sum(of Tot:);</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Special SAS</td>
+	<td style="text-align:left;">all of the variables, all of the character variables, or all of the numeric variables that are already defined in the current DATA step</td>
+	<td style="text-align:left;">Total = sum(of <em>All</em>);</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Name List:</td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;">Total = sum(of <em>Character</em>);</td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;">Total = sum(of <em>Numeric</em>);</td>
+</tr>
+</tbody>
+</table>
+

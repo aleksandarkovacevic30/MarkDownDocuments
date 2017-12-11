@@ -1,0 +1,2096 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<link type="text/css" rel="stylesheet" href="sascs.css"/>
+</head>
+<body>
+
+<!--<div class="three-cols">-->
+
+<!--</div><div class="page-break"></div><font size=32>test</font><div class="three-cols">-->
+
+<h1 id="sasbasecheatsheet">SAS Base CheatSheet</h1>
+
+<h2 id="basics">Basics</h2>
+
+<p>A <strong>SAS program</strong> consists of DATA steps and PROC steps.
+A <strong>SAS programming step</strong> is comprised of a sequence of statements. Every step has a beginning and ending step boundary. SAS compiles and executes each step independently, based on the step boundaries.</p>
+
+<p>A <strong>SAS program</strong> can also contain global statements, which are outside DATA and PROC steps, and typically affect the SAS session. A <strong>TITLE</strong> statement is a global statement.</p>
+
+<p>DATA step only produces output. PROC step only produces report.</p>
+
+<pre><code>/* comment */
+
+* comment statement;
+</code></pre>
+
+<h2 id="accessingsaslibraries">Accessing SAS Libraries</h2>
+
+<p><strong>Work</strong> is a temporary library that is used to store and access SAS data sets for the duration of the session. <strong>Sasuser</strong> and <strong>sashelp</strong> are permanent libraries that are available in every SAS session.</p>
+
+<p>You refer to a SAS library by a library reference name, or libref. A <strong>libref</strong> is a shortcut to the physical location of the SAS files.</p>
+
+<pre><code>LIBNAME libref 'SAS-library' &lt;options&gt;;
+</code></pre>
+
+<p>Use <strong>PROC CONTENTS</strong> with <strong>libref.<em>ALL</em></strong> to display the contents of a SAS library.Use the <strong>NODS</strong> option in the PROC CONTENTS statement to suppress the descriptor information for each data set.</p>
+
+<pre><code>PROC CONTENTS DATA=libref._ALL_ NODS;
+RUN;
+</code></pre>
+
+<p>After associating a libref with a permanent library, you can write a <strong>PROC PRINT</strong> step to display a SAS data set within the library.</p>
+
+<pre><code>PROC PRINT DATA=libref.SAS-data-set;        
+RUN;
+</code></pre>
+
+<p>In an interactive SAS session, a libref remains in effect until you cancel it, change it, or end your SAS session. To cancel a libref, you submit a LIBNAME statement with the CLEAR option.</p>
+
+<pre><code>LIBNAME libref CLEAR;
+</code></pre>
+
+<h2 id="examiningsasdatasets">Examining SAS Data Sets</h2>
+
+<p>The <strong>descriptor portion</strong> contains general information about the data set (such as the data set name and the number of observations) and information about the variable attributes (such as name, type, and length). </p>
+
+<p>There are two types of variables: character and numeric. </p>
+
+<ul>
+<li>A character variable can store any value and can be up to 32,767 characters long.</li>
+<li>Numeric variables store numeric values in floating point or binary representation in 8 bytes of storage by default.</li>
+</ul>
+
+<p>Other attributes include formats, informats, and labels. You can use PROC CONTENTS to browse the descriptor portion of a data set.</p>
+
+<pre><code>PROC CONTENTS DATA=libref.SAS-data-set;
+RUN;
+</code></pre>
+
+<p>The <strong>data portion</strong> contains the data values. Data values are either character or numeric. </p>
+
+<p>A missing value is a valid value in SAS. </p>
+
+<ul>
+<li>A missing character value is displayed as a blank, and</li>
+<li>a missing numeric value is displayed as a period.</li>
+</ul>
+
+<p>You can specify an alternate character to print for missing numeric values using the <em>MISSING=</em> SAS system option. You can use PROC PRINT to display the data portion of a SAS data set.</p>
+
+<p>SAS variable and data set names must be</p>
+
+<ul>
+<li>1 to 32 characters in length and</li>
+<li>start with a letter or underscore, followed by letters, underscores, and numbers.</li>
+<li>Variable names are not case sensitive.</li>
+</ul>
+
+<h3 id="sampleprograms">Sample Programs</h3>
+
+<h4 id="accessingasaslibrary">Accessing a SAS Library</h4>
+
+<pre><code>%let path=filepath;
+libname orion &quot;&amp;path&quot;;
+</code></pre>
+
+<h4 id="browsingalibrary">Browsing a Library</h4>
+
+<pre><code>proc contents data=orion._all_;
+run;
+
+proc contents data=orion._all_ nods;
+run;
+</code></pre>
+
+<h4 id="viewingadatasetwithprocprint">Viewing a Data Set with PROC PRINT</h4>
+
+<pre><code>proc print data=orion.country;
+run;
+</code></pre>
+
+<h4 id="viewingthedescriptorportionofadataset">Viewing the Descriptor Portion of a Data Set</h4>
+
+<pre><code>proc contents data=orion.sales;
+run;
+</code></pre>
+
+<h4 id="viewingthedataportionofasasdataset">Viewing the Data Portion of a SAS Data Set</h4>
+
+<pre><code>proc print data=orion.sales;
+run;
+</code></pre>
+
+<h2 id="subsettingreportdata">Subsetting Report Data</h2>
+
+<p>You can use the <strong>VAR</strong> statement in a PROC PRINT step to <strong>subset the variables</strong> in a report. You specify the variables to include and list them in the order in which they are to be displayed.</p>
+
+<p>You can use the <strong>SUM</strong> statement in a PROC PRINT step to calculate and display report totals for the requested numeric variables.</p>
+
+<pre><code>PROC PRINT DATA=SAS-data-set; 
+        VAR variable(s); 
+        SUM variable(s); 
+RUN;
+</code></pre>
+
+<p>The <strong>WHERE</strong> statement in a PROC PRINT step subsets the observations in a report. When you use a WHERE statement, the output contains only the observations that meet the conditions specified in the WHERE expression. </p>
+
+<pre><code>WHERE where-expression;
+</code></pre>
+
+<p>You can use the <strong>ID</strong> statement in a PROC PRINT step to specify a variable to print at the beginning of the row instead of an observation number. The variable that you specify replaces the Obs column.</p>
+
+<pre><code>ID variable(s);
+</code></pre>
+
+<h2 id="sortingandgroupingreportdata">Sorting and Grouping Report Data</h2>
+
+<p>You can sort on one variable or multiple variables, sort on character or numeric variables, and sort in ascending or descending order. </p>
+
+<p>By default, SAS replaces the original SAS data set unless you use the OUT= option to specify an output data set. </p>
+
+<p>PROC SORT does not generate printed output.</p>
+
+<p>Every PROC SORT step <strong>must</strong> include a BY statement to specify one or more BY variables. </p>
+
+<p>By default, SAS sorts in ascending order, but you can use the keyword DESCENDING to specify that the values of a variable are to be sorted in descending order. </p>
+
+<p><em>Remember that the input data set must be sorted on the variables specified in the BY statement.</em></p>
+
+<pre><code>PROC SORT DATA=input-SAS-data-set
+    &lt;OUT=ouput-SAS-data-set&gt;;
+    BY &lt;DESCENDING&gt; by-variable(s);
+RUN;
+</code></pre>
+
+<h2 id="enhancingreports">Enhancing Reports</h2>
+
+<pre><code>TITLEn 'text';
+FOOTNOTEn 'text';
+</code></pre>
+
+<p>n=1..10</p>
+
+<pre><code>TITLE;
+FOOTNOTE;
+</code></pre>
+
+<p>cancel all the previous Title definition, and footnotes.</p>
+
+<p>Use the LABEL statement in a PROC PRINT step to define temporary labels to display in the report instead of variable names. </p>
+
+<p>Labels can be up to 256 characters in length. </p>
+
+<p>Use the <strong>LABEL</strong> option or <strong>SPLIT=</strong> option in the PROC PRINT statement to tell SAS to display the labels. The <strong>SPLIT=</strong> option specifies a split character to control line breaks in column headings.</p>
+
+<pre><code>PROC PRINT DATA=SAS-data-set LABEL; 
+        LABEL variable='label'
+                     variable='label'
+                    ... ;
+RUN;
+
+
+SPLIT='split-character';
+</code></pre>
+
+<h3 id="sampleprograms">Sample Programs</h3>
+
+<h4 id="selectingobservations">Selecting Observations</h4>
+
+<pre><code>proc print data=orion.sales noobs;
+   var Last_Name First_Name Salary Country;
+   where Country='AU' 
+    and Salary&lt;25500 
+    and Job_Title contains 'Rep';
+   sum Salary;
+   id Customer_ID;
+   var Customer_Name
+       Customer_Gender Customer_Country
+       Customer_Group Customer_Age_Group
+       Customer_Type;
+run;
+</code></pre>
+
+<h4 id="groupingobservationsinreports">Grouping Observations in Reports</h4>
+
+<pre><code>proc sort data=orion.sales          
+          out=work.sales2;   
+   by Country descending Salary;
+run;
+proc print data=work.sales2;
+   by Country;
+run;
+</code></pre>
+
+<h4 id="displayinglabelsinareport">Displaying Labels in a Report</h4>
+
+<pre><code>title1 'Orion Star Sales Staff';
+title2 'Salary Report';
+footnote1 'Confidential';
+proc print data=orion.sales label;
+   var Employee_ID Last_Name Salary;
+   label Employee_ID = 'Sales ID'
+         Last_Name = 'Last Name'
+         Salary = 'Annual Salary';
+run;
+title;
+footnote;
+</code></pre>
+
+<h2 id="formattingdatavalues">Formatting Data Values</h2>
+
+<p>Using SAS Formats</p>
+
+<pre><code>FORMAT variable(s) format;
+</code></pre>
+
+<p>SAS stores date values as the number of days between January 1, 1960, and a specific date. </p>
+
+<table>
+<colgroup>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">FORMAT</th>
+	<th style="text-align:left;">Result</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;">DATE9.</td>
+	<td style="text-align:left;">17MAR2000</td>
+</tr>
+<tr>
+	<td style="text-align:left;">DDMMYY10.</td>
+	<td style="text-align:left;">17/03/2000</td>
+</tr>
+<tr>
+	<td style="text-align:left;">MMDDYY10.</td>
+	<td style="text-align:left;">03/17/2000</td>
+</tr>
+<tr>
+	<td style="text-align:left;">MONYY.</td>
+	<td style="text-align:left;">MAR2000</td>
+</tr>
+<tr>
+	<td style="text-align:left;">QTRw.</td>
+	<td style="text-align:left;">1</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<colgroup>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">FORMAT</th>
+	<th style="text-align:left;">Stored Value</th>
+	<th style="text-align:left;">Displayed Value</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;">MMDDYY6.</td>
+	<td style="text-align:left;">365</td>
+	<td style="text-align:left;">123160</td>
+</tr>
+<tr>
+	<td style="text-align:left;">MMDDYY8.</td>
+	<td style="text-align:left;">365</td>
+	<td style="text-align:left;">12/31/60</td>
+</tr>
+<tr>
+	<td style="text-align:left;">MMDDYY10.</td>
+	<td style="text-align:left;">0</td>
+	<td style="text-align:left;">12/31/1960</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<colgroup>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">FORMAT</th>
+	<th style="text-align:left;">Stored Value</th>
+	<th style="text-align:left;">Displayed Value</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;">$4.</td>
+	<td style="text-align:left;">Programming</td>
+	<td style="text-align:left;">Prog</td>
+</tr>
+<tr>
+	<td style="text-align:left;">12.</td>
+	<td style="text-align:left;">27134.5864</td>
+	<td style="text-align:left;">27135</td>
+</tr>
+<tr>
+	<td style="text-align:left;">12.2</td>
+	<td style="text-align:left;">27134.5864</td>
+	<td style="text-align:left;">27134.59</td>
+</tr>
+<tr>
+	<td style="text-align:left;">COMMA12.2</td>
+	<td style="text-align:left;">27134.5864</td>
+	<td style="text-align:left;">27,134.59</td>
+</tr>
+<tr>
+	<td style="text-align:left;">DOLLARw.d</td>
+	<td style="text-align:left;">27134.5864</td>
+	<td style="text-align:left;">$ 27,134.59</td>
+</tr>
+<tr>
+	<td style="text-align:left;">COMMAX12.2</td>
+	<td style="text-align:left;">27134.5864</td>
+	<td style="text-align:left;">27.134,59</td>
+</tr>
+<tr>
+	<td style="text-align:left;">EUROX12.2</td>
+	<td style="text-align:left;">27134.5864</td>
+	<td style="text-align:left;">€ 27.134,59</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<colgroup>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">FORMAT</th>
+	<th style="text-align:left;">Stored Value</th>
+	<th style="text-align:left;">Displayed Value</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;">DOLLAR12.2</td>
+	<td style="text-align:left;">27134.5864</td>
+	<td style="text-align:left;">$27,134.59</td>
+</tr>
+<tr>
+	<td style="text-align:left;">DOLLAR9.2</td>
+	<td style="text-align:left;">27134.5864</td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">DOLLAR8.2</td>
+	<td style="text-align:left;">27134.5864</td>
+	<td style="text-align:left;">27134.59</td>
+</tr>
+<tr>
+	<td style="text-align:left;">DOLLAR5.2</td>
+	<td style="text-align:left;">27134.5864</td>
+	<td style="text-align:left;">27135</td>
+</tr>
+<tr>
+	<td style="text-align:left;">DOLLAR4.2</td>
+	<td style="text-align:left;">27134.5864</td>
+	<td style="text-align:left;">27E3</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="creatingandapplyinguser-definedformats">Creating and Applying User-Defined Formats</h3>
+
+<p><strong>format name</strong> can have up to 32 characters. </p>
+
+<p>The name of a <strong>character format</strong> must begin with a dollar sign, followed by a letter or underscore, followed by letters, numbers, and underscores. </p>
+
+<p>Names for <strong>numeric formats</strong> must begin with a letter or underscore, followed by letters, numbers, and underscores. </p>
+
+<p><em>A format name cannot end in a number and cannot be the name of a SAS format.</em></p>
+
+<p>You use a VALUE statement in a PROC FORMAT step to specify the way that you want the data values to appear in your output.</p>
+
+<pre><code>PROC FORMAT;
+        VALUE format-name 
+          value-or-range1='formatted-value1'
+          value-or-range2='formatted-value2'
+          ...;
+RUN;
+</code></pre>
+
+<p>The <strong>LOW</strong> and <strong>HIGH</strong> keywords are used to define a continuous range when the lowest and highest values are not known. </p>
+
+<p><em>Remember that for character values, the LOW keyword treats missing values as the lowest possible values. However, for numeric values, LOW does not include missing values.</em></p>
+
+<h3 id="sampleprograms">Sample Programs</h3>
+
+<h4 id="specifyingauser-definedformatforacharactervariable">Specifying a User-Defined Format for a Character Variable</h4>
+
+<pre><code>proc format;
+   value tiers low-&lt;50000='Tier1'
+               50000-100000='Tier2'
+               100000&lt;-high='Tier3';
+run;
+proc format;
+   value $ctryfmt 'AU'='Australia'
+                  'US'='United States'
+                  other='Miscoded';
+run;
+proc print data=orion.sales label;
+   var Employee_ID Job_Title Salary 
+       Country Birth_Date Hire_Date;
+   label Employee_ID='Sales ID'
+         Job_Title='Job Title'
+         Salary='Annual Salary'
+         Birth_Date='Date of Birth'
+         Hire_Date='Date of Hire';
+   format Salary tiers. 
+          Birth_Date Hire_Date monyy7.
+          Country $ctryfmt.;
+run;
+</code></pre>
+
+<h2 id="readingsasdatasets">Reading SAS Data Sets</h2>
+
+<p>You use the WHERE statement to subset the input data set by selecting only the observations that meet a particular condition. To subset based on a SAS date value, you can use a SAS date constant in the WHERE expression. SAS automatically converts a date constant to a SAS date value.</p>
+
+<pre><code>DATA output-SAS-data-set;
+       SET input-SAS-data-set;
+       WHERE where-expression; 
+RUN;
+
+
+variable=expression;
+</code></pre>
+
+<h3 id="customizingasasdataset">Customizing a SAS Data Set</h3>
+
+<p>By default, the SET statement reads all of the observations and variables from the input data set and writes them to the output data set. </p>
+
+<p>You can use a DROP statement to list the variables to exclude from the new data set, or use a KEEP statement to list the variables to include. </p>
+
+<p>If you use a KEEP statement, you must include every variable to be written, including any new variables.</p>
+
+<pre><code>DROP variable-list;
+KEEP variable-list;
+</code></pre>
+
+<p><strong>WHERE</strong> statement you can use <strong>ONLY</strong> for variables that are defined in the input data set. Where statement is more efficient as it subsets the input data.</p>
+
+<p><strong>IF</strong> statement you can use also for new variables that are created in the data step.</p>
+
+<p><em>Remember that, although IF expressions are similar to WHERE expressions, you cannot use special WHERE operators in IF expressions.</em></p>
+
+<pre><code>IF expression;
+</code></pre>
+
+<p>To <strong>subset observations</strong> in a <strong>PROC</strong> step, you <strong>MUST</strong> use a WHERE statement. You <strong>cannot</strong> use a subsetting IF statement in a PROC step. </p>
+
+<h3 id="addingpermanentattributes">Adding Permanent Attributes</h3>
+
+<p>Using a FORMAT statement in a DATA step permanently associates formats with variables. </p>
+
+<pre><code>LABEL variable='label'
+            variable='label'
+              ... ;
+
+FORMAT variable(s) format ...;
+</code></pre>
+
+<h3 id="sampleprograms">Sample Programs</h3>
+
+<h4 id="subsettingvariablesinadatastep:dropandkeep">Subsetting Variables in a DATA Step: DROP and KEEP</h4>
+
+<pre><code>data work.subset1;
+   set orion.sales;
+   where Country='AU' and
+         Job_Title contains 'Rep';
+   Bonus=Salary*.10;
+   label Job_Title='Sales Title'
+         Hire_Date='Date Hired';
+   format Salary Bonus dollar12. 
+          Hire_Date ddmmyy10.;
+   drop Employee_ID Gender Country Birth_Date;
+    if Bonus&gt;=3000;
+run;
+proc print data=work.subset1;
+run;
+data work.subset1;
+   set orion.sales;
+   where Country='AU' and
+         Job_Title contains 'Rep';
+   Bonus=Salary*.10;
+   keep First_Name Last_Name 
+    Salary Job_Title Hire_Date Bonus;
+run;
+proc print data=work.subset1;
+run;
+</code></pre>
+
+<h2 id="readingspreadsheetanddatabasedata">Reading Spreadsheet and Database Data</h2>
+
+<h3 id="readingspreadsheetdata">Reading Spreadsheet Data</h3>
+
+<pre><code>LIBNAME libref &lt;engine&gt; 
+    &quot;workbook-name&quot; &lt;options&gt;;
+LIBNAME libref &lt;engine&gt; 
+    &lt;PATH=&gt; &quot;workbook-name&quot; &lt;options&gt;;
+</code></pre>
+
+<p>In order to address Sheet within the spreadsheet, you do it like this:</p>
+
+<pre><code>libref.'worksheetname$'n
+</code></pre>
+
+<p>When you assign a libref to an Excel workbook in SAS, the workbook cannot be opened in Excel. To disassociate a libref, you submit a LIBNAME statement specifying the libref and the CLEAR option. SAS disconnects from the data source and closes any resources that are associated with the connection.</p>
+
+<h3 id="readingdatabasedata">Reading Database Data</h3>
+
+<p>You can also read database tables as if they were SAS data sets by using the LIBNAME statement supported by SAS/ACCESS Interface to Oracle. This SAS/ACCESS LIBNAME statement includes a libref, an engine name, and additional connection options that are site- and installation-specific. After you submit the LIBNAME statement, SAS treats the Oracle database as if it were a SAS library, and any table in the database can be referenced using a SAS two-level name, as if it were a SAS data set.</p>
+
+<pre><code>LIBNAME libref engine &lt;SAS/ACCESS Oracle options&gt;;
+</code></pre>
+
+<h3 id="sampleprograms">Sample Programs</h3>
+
+<h4 id="accessingexcelworksheetsinsas">Accessing Excel Worksheets in SAS</h4>
+
+<pre><code>libname orionx pcfiles path=&quot;&amp;path/sales.xls&quot;;
+proc contents data=orionx._all_;
+run;
+</code></pre>
+
+<h4 id="printinganexcelworksheet">Printing an Excel Worksheet</h4>
+
+<pre><code>proc print data=orionx.'Australia$'n;
+run;
+proc print data=orionx.'Australia$'n noobs;
+   where Job_Title ? 'IV';
+   var Employee_ID Last_Name Job_Title Salary;
+run;
+</code></pre>
+
+<h4 id="creatingasasdatasetfromanexcelworksheet">Creating a SAS Data Set from an Excel Worksheet</h4>
+
+<pre><code>libname orionx pcfiles path=&quot;&amp;path/sales.xls&quot;;
+data work.subset;
+   set orionx.'Australia$'n;
+   where Job_Title contains 'Rep';
+   Bonus=Salary*.10;
+   label Job_Title='Sales Title'
+         Hire_Date='Date Hired';
+   format Salary comma10. Hire_Date mmddyy10.
+          Bonus comma8.2;
+run;
+libname orionx clear;
+</code></pre>
+
+<h2 id="readingrawdatafiles">Reading Raw Data Files</h2>
+
+<h3 id="readingstandarddelimiteddata">Reading Standard Delimited Data</h3>
+
+<p>The <strong>INFILE</strong> statement identifies the name and location of the input file. You use the <strong>DLM=</strong> option if the file has a delimiter other t.-.-,.–m,han a blank space.
+The <strong>INPUT</strong> statement tells SAS how to read the values, and specifies the name and type for each variable to be created. </p>
+
+<p><em>With list input, the default length for all variables is 8 bytes, regardless of type.</em></p>
+
+<pre><code>DATA output-SAS-data-set-name;
+        INFILE 'raw-data-file-name' 
+            DLM='delimiter';
+        INPUT variable1 &lt;$&gt; variable2 &lt;$&gt; 
+            ... variableN &lt;$&gt;;
+RUN; 
+</code></pre>
+
+<p>SAS processes the DATA step in two phases: <em>compilation</em> and <em>execution</em>. </p>
+
+<p>During <strong>compilation</strong>, SAS creates an input buffer to hold a record from the raw data file. The input buffer is an area of memory that SAS creates only when reading raw data, not when reading a SAS data set. SAS also creates the PDV, an area of memory where an observation is built.
+In addition to the variables named in the INPUT statement, SAS creates the iteration counter, <strong>_N_</strong>, and the error indicator, <strong>_ERROR_</strong>, in the PDV. These temporary variables are not written to the output data set. At the end of the compilation, SAS creates the descriptor portion of the output data set.</p>
+
+<p>At the start of the <strong>execution</strong> phase, SAS initializes the PDV and then reads the first record from the raw data file into the input buffer.
+It scans the input buffer from non-delimiter to delimiter and assigns each value to the corresponding variable in the PDV. SAS ignores delimiters. At the bottom of the DATA step, SAS writes the values from the PDV to the new SAS data set and then returns to the top of the DATA step.</p>
+
+<p><em>WARNING: Truncation often occurs with list input, because character variables are created with a length of 8 bytes, by default.</em> </p>
+
+<p>You can use a <strong>LENGTH</strong> statement before the INPUT statement in a DATA step to explicitly define the length of character variables. Numeric variables can be included in the LENGTH statement to preserve the order of variables, but you need to specify a length of 8 for each numeric variable.</p>
+
+<pre><code>LENGTH variable(s) &lt;$&gt; length;
+</code></pre>
+
+<h3 id="readingnonstandarddelimiteddata">Reading Nonstandard Delimited Data</h3>
+
+<p>You can use modified list input to read standard and nonstandard data from a delimited raw data file. Modified list input uses an <strong>informat</strong> and a colon format modifier for each field to be read. </p>
+
+<p>When SAS reads character data, a standard character informat, such as $12., is often used instead of a LENGTH statement. </p>
+
+<p>The <strong>colon format modifier</strong> tells SAS to ignore the specified length when it reads data values, and instead to read only until it reaches a delimiter. Omitting the colon format modifier is likely to result in data errors.</p>
+
+<pre><code>INPUT variable &lt;$&gt; variable &lt;:informat&gt;;
+</code></pre>
+
+<p>An informat is required to read nonstandard numeric data, such as calendar dates, and numbers with dollar signs and commas. Many SAS informats are available for nonstandard numeric values. Every informat has a width, whether stated explicitly or set by default.</p>
+
+<p>When reading a raw data file, you can use a DROP or KEEP statement to write a subset of variables to the new data set. </p>
+
+<p><em>WARNING: You cant use WHERE statement to select observations from raw data format!</em></p>
+
+<p>You must use a subsetting IF statement to select observations, because the variables are not coming from an input SAS data set. </p>
+
+<p>You can use <strong>LABEL</strong> and <strong>FORMAT</strong> statements to permanently store label and format information in the new data set.</p>
+
+<pre><code>DATALINES;
+&lt;data line 1&gt;
+&lt;data line 2&gt;
+...
+;
+</code></pre>
+
+<h3 id="validatingdata">Validating Data</h3>
+
+<p>When data values in the input file aren&#8217;t appropriate for the INPUT statement in a program, a data error occurs during program execution. SAS records the error in the log by writing a note about the error, along with a ruler and the contents of the input buffer and the PDV. The variable <em>ERROR</em> is set to 1, a missing value is assigned to the corresponding variable, and execution continues.</p>
+
+<p>You can use the <strong>DSD</strong> option in the <strong>INFILE</strong> statement if data values are missing in the middle of a record. When you use the <strong>DSD</strong> option, SAS assumes that the file is <strong>comma delimited</strong>, treats consecutive delimiters as missing data, and allows embedded delimiters in a field that is enclosed in quotation marks. </p>
+
+<p>If you have missing data values at the end of a record, you can use the <strong>MISSOVER</strong> option in the INFILE statement. SAS sets the variable values to missing.</p>
+
+<pre><code>INFILE 'raw-data-file-name' 
+    &lt;DLM=&gt; &lt;DSD&gt; &lt;MISSOVER&gt;;
+</code></pre>
+
+<h3 id="sampleprograms">Sample Programs</h3>
+
+<h4 id="specifyingthelengthsofvariablesexplicitly">Specifying the Lengths of Variables Explicitly</h4>
+
+<pre><code>data work.sales2;
+   length Employee_ID  8 First_Name $ 12
+          Last_Name $ 18 Gender $ 1 
+          Salary  8 Job_Title $ 25
+          Country $ 2;
+   infile &quot;&amp;path/sales.csv&quot; dlm=',';
+   input Employee_ID First_Name $ Last_Name $ 
+         Gender $ Salary Job_Title $ Country $; 
+run;
+proc contents data=work.sales2 varnum;
+run;
+proc print data=work.sales2;
+run;
+</code></pre>
+
+<h4 id="specifyinginformatsintheinputstatement">Specifying Informats in the INPUT Statement</h4>
+
+<pre><code>data work.sales2;
+   infile &quot;&amp;path/sales.csv&quot; dlm=',';
+   input Employee_ID First_Name :$12. 
+        Last_Name :$18. Gender :$1. 
+        Salary Job_Title :$25. Country :$2.
+         Birth_Date :date. Hire_Date :mmddyy.;
+run; 
+proc print data=work.sales2;
+run;
+</code></pre>
+
+<h4 id="readinginstreamdata">Reading Instream Data</h4>
+
+<pre><code>data work.newemps;
+   input First_Name $ Last_Name $  
+         Job_Title $ Salary :dollar8.;
+   datalines;
+Steven Worton Auditor $40,450
+Merle Hieds Trainee $24,025
+Marta Bamberger Manager $32,000
+;
+proc print data=work.newemps;
+run;
+data work.newemps2;
+   infile datalines dlm=',';
+   input First_Name $ Last_Name $
+         Job_Title $ Salary :dollar8.;
+   datalines;
+Steven,Worton,Auditor,$40450
+Merle,Hieds,Trainee,$24025
+Marta,Bamberger,Manager,$32000
+;
+proc print data=work.newemps2;
+run; 
+</code></pre>
+
+<h3 id="readingarawdatafilethatcontainsmissingdata">Reading a Raw Data File That Contains Missing Data</h3>
+
+<pre><code>data work.contacts;
+   length Name $ 20 Phone Mobile $ 14;
+   infile &quot;&amp;path/phone2.csv&quot; dsd;
+   input Name $ Phone $ Mobile $;
+run;
+proc print data=work.contacts noobs;
+run;
+</code></pre>
+
+<h4 id="readingarawdatafileusingthemissoveroption">Reading a Raw Data File Using the MISSOVER Option</h4>
+
+<pre><code>data work.contacts2;
+   infile &quot;&amp;path/phone.csv&quot; dlm=',' missover; 
+   input Name $ Phone $ Mobile $;
+run;
+proc print data=contacts2 noobs;
+run;
+data work.contacts2;
+   length Name $ 20 Phone Mobile $ 14;
+   infile &quot;&amp;path/phone.csv&quot; dlm=',' missover; 
+   input Name $ Phone $ Mobile $;
+run;
+proc print data=contacts2 noobs;
+run;
+</code></pre>
+
+<h2 id="manipulatingdata">Manipulating Data</h2>
+
+<h3 id="usingsasfunctions">Using SAS Functions</h3>
+
+<p>You use an assignment statement in a DATA step to evaluate an expression and assign the result to a new or existing variable. The expression on the right side of an assignment statement can include calls to SAS functions. A SAS function is a routine that accepts arguments and returns a value.</p>
+
+<pre><code>variable=expression;
+</code></pre>
+
+<p>The SUM function, a descriptive statistics function, returns the sum of its arguments and ignores missing values. The arguments can be numeric constants, numeric variables, or arithmetic expressions, but the arguments must be numeric values and must be enclosed in parentheses and separated with commas. The parentheses are required, even if no arguments are passed to the function.</p>
+
+<pre><code>SUM(argument1,argument2, ...)
+
+MONTH(SAS-date)
+YEAR(SAS-date)
+DAY(SAS-date)
+    TODO: add more functions used within practice
+</code></pre>
+
+<h3 id="conditionalprocessing">Conditional Processing</h3>
+
+<pre><code>IF expression THEN 
+      DO;
+            executable statements
+      END; 
+ELSE IF expression THEN 
+      DO;
+            executable statements
+END;
+</code></pre>
+
+<p><em>Truncation can occur when new variables are assigned values within conditional program statements. During compilation, SAS creates a variable in the PDV the first time it encounters the variable in the program. If this is in conditional code, be sure that it is created with a length long enough to store all possible values. It is a best practice to use a LENGTH statement to explicitly define the length.</em></p>
+
+<h3 id="sampleprograms">Sample Programs</h3>
+
+<h4 id="creatingvariablesbyusingfunctions">Creating Variables by Using Functions</h4>
+
+<pre><code>data work.comp;
+   set orion.sales;
+   Bonus=500;
+   Compensation=sum(Salary,Bonus);
+   BonusMonth=month(Hire_Date);
+run;
+proc print data=work.comp;
+   var Employee_ID First_Name Last_Name 
+       Salary Bonus Compensation BonusMonth;
+run;
+</code></pre>
+
+<h4 id="usingcompoundconditions">Using Compound Conditions</h4>
+
+<pre><code>data work.comp;
+   set orion.sales;
+   Freq='Once a Year';
+   if Job_Title='Sales Rep. III' or
+      Job_Title='Sales Rep. IV' then
+      Bonus=1000;
+   else if Job_Title='Sales Manager' then
+      do;
+      Freq='Twice a Year';
+      Bonus=1500;
+      end;
+   else if Job_Title='Senior Sales Manager' then 
+      Bonus=2000;
+   else if Job_Title='Chief Sales Officer' then 
+      Bonus=2500;
+   else Bonus=500;
+run; 
+proc print data=work.comp;
+   var Last_Name Job_Title Bonus;
+run;
+</code></pre>
+
+<h2 id="combiningsasdatasets">Combining SAS Data Sets</h2>
+
+<h3 id="concatenatingdatasets">Concatenating Data Sets</h3>
+
+<pre><code>DATA SAS-data-set;
+       SET SAS-data-set1 
+          SAS-data-set2(RENAME=(oldName1=newName1;
+                        old-name-2=new-name-2
+                        ...
+                        old-name-n=new-name-n))
+                             ...;
+RUN;
+</code></pre>
+
+<p>This dataset would <strong>combine two dataset vertically</strong>. In the <strong>compilation phase</strong> it would create PDV out of all variables that are existing. In the <strong>execution phase</strong>, it will store values from SAS-data-set1 and then from SAS-data-set2. All non-existent values will be filled as missing value. </p>
+
+<p>You can use the <strong>RENAME=</strong> data set option to change variable names in one or more data sets, for purpose of:</p>
+
+<ul>
+<li>merge variables which should be merged (e.g. Birth_Date and DateOfBirth)</li>
+<li>rename variables that are same-named in different datasets to avoid overwriting of data (and thereby data-loss).</li>
+</ul>
+
+<h3 id="mergingsasdatasetsone-to-one">Merging SAS Data Sets One-to-One</h3>
+
+<p>In order to <strong>combine two datasets horizontally</strong>, you can use <strong>MERGE</strong> statement.</p>
+
+<p>The <strong>BY</strong> statement indicates a match-merge and specifies the common variable or variables to match. The <strong>BY</strong> variables must exist in every data set, and each data set <strong>MUST be sorted</strong> by the value of the BY variables.</p>
+
+<pre><code>DATA SAS-data-set;
+       MERGE SAS-data-set1 SAS-data-set2 ...;
+       BY &lt;DESCENDING&gt; BY-variable(s);
+       &lt;additional SAS statements&gt;
+RUN;
+</code></pre>
+
+<h3 id="mergingsasdatasetsthathavenon-matches">Merging SAS Data Sets That Have Non-Matches</h3>
+
+<p>By default, both <strong>matches and non-matches are included</strong> in a merged data set.</p>
+
+<p>You can use the <strong>IN=</strong> data set option in a MERGE statement to create a <strong>temporary variable</strong> that indicates whether a data set contributed information to the observation in the PDV. </p>
+
+<p>The IN= variables have two possible values: 0 and 1. </p>
+
+<pre><code>MERGE SAS-data-set1 &lt;(IN=variable)&gt;...
+</code></pre>
+
+<h3 id="sampleprograms">Sample Programs</h3>
+
+<h4 id="mergingdatasetsone-to-one">Merging Data Sets One-to-One</h4>
+
+<pre><code>/* Create Data */
+data empsau;
+   input First $ Gender $ EmpID;
+   datalines;
+Togar   M   121150
+Kylie   F   121151
+Birin   M   121152
+;
+run;
+data phoneh;
+   input EmpID Phone $15.;
+   datalines;
+121150 +61(2)5555-1793
+121151 +61(2)5555-1849
+121152 +61(2)5555-1665
+;
+run;
+/* Match-Merge One-to-One */
+data empsauh;
+   merge empsau phoneh;
+   by EmpID;
+run;
+proc print data=empsauh;
+run;
+</code></pre>
+
+<h4 id="selectingnon-matches">Selecting Non-Matches</h4>
+
+<pre><code>/* Create Data */
+data empsau;
+   input First $ Gender $ EmpID;
+   datalines;
+Togar   M   121150
+Kylie   F   121151
+Birin   M   121152
+;
+run;
+data phonec;
+   input EmpID Phone $15.;
+   datalines;
+121150 +61(2)5555-1795
+121152 +61(2)5555-1667
+121153 +61(2)5555-1348
+;
+run;
+/* Non-Matches from empsau Only */
+data empsauc2;
+   merge empsau(in=Emps) 
+         phonec(in=Cell);
+   by EmpID;
+   if Emps=1 and Cell=0;
+run;
+proc print data=empsauc2;
+run;
+</code></pre>
+
+<h2 id="creatingsummaryreports">Creating Summary Reports</h2>
+
+<h3 id="usingprocfreqtocreatesummaryreports">Using PROC FREQ to Create Summary Reports</h3>
+
+<p>You can use PROC FREQ to produce frequency tables that report the distribution of any or all variable values in a SAS data set. You use the TABLES statement to specify the frequency tables to produce.</p>
+
+<pre><code>PROC FREQ DATA=SAS-data-set &lt;optionFreq(s)&gt;;
+       TABLES variable(s) &lt;/optionTable(s)&gt;;
+       &lt;additional SAS statements&gt;
+RUN;
+</code></pre>
+
+<p>optionFreq:</p>
+
+<ul>
+<li><strong>COMPRESS</strong> - Begins the next one-way table on the current page</li>
+<li><strong>NLEVELS</strong> - Displays the number of levels for all TABLES variables</li>
+<li><strong>NOPRINT</strong> - Suppresses all displayed output</li>
+<li><strong>PAGE</strong> - Displays one table per page</li>
+<li><strong>ORDER=</strong>
+
+<ul>
+<li><strong>FREQ</strong> - Descending frequency count; levels with the most observations come first in the order</li>
+<li><strong>INTERNAL</strong> - Unformatted value</li>
+<li><strong>DATA</strong> - Order of appearance in the input data set</li>
+<li><strong>FORMATTED</strong> - External formatted value, except for numeric variables with no explicit format, which are sorted by their unformatted (internal) value</li>
+</ul></li>
+</ul>
+
+<p>optionTable:</p>
+
+<ul>
+<li><strong>MISSING</strong> - Treats missing values as nonmissing</li>
+<li><strong>CUMCOL</strong> - Displays cumulative column percentages</li>
+<li><strong>MISSPRINT</strong> - Displays missing value frequencies</li>
+<li><strong>FORMAT=</strong> - Formats the frequencies in crosstabulation tables</li>
+<li><strong>LIST</strong> - Displays two-way to n-way tables in list format</li>
+<li><strong>NOCOL</strong> - Suppresses display of column percentages</li>
+<li><strong>NOCUM</strong> - Suppresses display of cumulative frequencies and percentages</li>
+<li><strong>NOFREQ</strong> - Suppresses display of frequencies</li>
+<li><strong>NOPERCENT</strong> - Suppresses display of percentages</li>
+<li><strong>NOPRINT</strong> - Suppresses display of crosstabulation tables but displays statistics</li>
+<li><strong>NOROW</strong> - Suppresses display of row percentages</li>
+<li><strong>OUT=</strong> - Names an output data set to contain frequency counts</li>
+</ul>
+
+<p>TABLES statement: It creates a one-way frequency table for each variable. </p>
+
+<ul>
+<li>You can request a separate analysis for each group by including a BY statement.</li>
+<li>You can request a two-way frequency table by separating the variables with an asterisk instead of a space.</li>
+</ul>
+
+<h3 id="examples">Examples</h3>
+
+<h4 id="placetheprocfreqresultintoasasdataset">Place the proc freq result into a sas dataset</h4>
+
+<pre><code>proc freq data=orion.order_fact;
+    tables Product_ID /out=work.bla noprint;
+run;
+</code></pre>
+
+<h4 id="usingformatsinprocfreq">Using Formats in PROC FREQ</h4>
+
+<pre><code>proc format;
+   value Tiers low-25000='Tier1'
+               25000&lt;-50000='Tier2'
+               50000&lt;-100000='Tier3'
+               100000&lt;-high='Tier4';
+run; 
+proc freq data=orion.sales;
+   tables Salary;
+   format Salary Tiers.;
+run;
+</code></pre>
+
+<h4 id="listingmultiplevariablesonatablesstatement">Listing Multiple Variables on a TABLES Statement</h4>
+
+<pre><code>proc freq data=orion.sales;
+   tables Gender Country;
+run;
+proc sort data=orion.sales out=sorted;
+   by Country;
+run;
+proc freq data=sorted;
+   tables Gender; 
+   by Country;
+run;
+</code></pre>
+
+<h4 id="creatingacrosstabulationtable">Creating a Crosstabulation Table</h4>
+
+<pre><code>proc freq data=orion.sales;
+   tables Gender*Country;
+run;
+</code></pre>
+
+<h4 id="usingprocfreqoptionstovalidateyourdata">Using PROC FREQ Options to Validate Your Data</h4>
+
+<pre><code>proc freq data=orion.nonsales2 order=freq;
+   tables Employee_ID/nocum nopercent;
+run;
+proc freq data=orion.nonsales2 nlevels;
+   tables Gender Country Employee_ID/nocum 
+        nopercent;
+run;
+proc freq data=orion.nonsales2 nlevels;
+   tables Gender Country Employee_ID/nocum 
+        nopercent noprint;
+run;
+</code></pre>
+
+<h4 id="usingprocprinttovalidateyourdata">Using PROC PRINT to Validate Your Data</h4>
+
+<pre><code>proc print data=orion.nonsales2 (obs=20);
+   where Gender not in ('F','M') or
+         Country not in ('AU','US') or
+         Job_Title is null or 
+         Salary not between 24000 and 500000 or 
+         Employee_ID is missing or
+         Employee_ID=120108;
+run;
+</code></pre>
+
+<h3 id="usingthemeansandunivariateprocedures">Using the MEANS and UNIVARIATE Procedures</h3>
+
+<p>You can use PROC MEANS to produce summary reports with descriptive statistics. By default, it reports:</p>
+
+<ul>
+<li>(N Obs) the number of total observations (including missing values),</li>
+<li>(N) the number of nonmissing values,</li>
+<li>the mean,</li>
+<li>the standard deviation,</li>
+<li>the minimum, and</li>
+<li>the maximum value of every numeric variable in a data set.</li>
+</ul>
+
+<p>You can use the <strong>VAR</strong> statement to specify the numeric variables for which the stastics (min,max, std,&#8230;) will be computed. </p>
+
+<p>You can use a <strong>CLASS</strong> statement to request statistics for groups of observations (e.g. compute salary statistics for each US employee and AU employee divided by gender) </p>
+
+<p><em>The variables listed in the CLASS statement are called</em> <strong>classification variables</strong>, <em>or class variables, and each combination of class variable values is called a</em> <strong>class level.</strong></p>
+
+<pre><code>PROC MEANS DATA=SAS-data-set &lt;statistic(s)&gt;;
+       VAR analysis-variable(s);
+       CLASS classification-variable(s);
+RUN;
+</code></pre>
+
+<p>statistics:
+* <strong>N</strong> - show number of observations
+* <strong>MEAN STD MIN MAX SUM</strong> - show statistical values
+* <strong>NONOBS</strong> - supress showing N Obs columns
+* <strong>NMISS</strong> - show number of missing values</p>
+
+<p>Values are formatted in BESTw. format by default. MAXDEC=number (maximum number of decimal places)</p>
+
+<p>When you use the CLASS statement, the output includes N Obs, which reports the number of observations with each unique combination of class variables. You can request specific statistics by listing them as options in the PROC MEANS statement. Other options are available to control the output.</p>
+
+<p>You can use <strong>PROC MEANS</strong> to validate a data set. The MIN, MAX, and NMISS statistics can be used to validate numeric data when you know the range of valid values. </p>
+
+<p><strong>PROC UNIVARIATE</strong> can be more useful because it displays the extreme observations, or outliers. By default, it displays the five highest and five lowest values of the analysis variable, and the number of the observation with each extreme value. You can use the <strong>NEXTROBS=</strong> option to display a different number of extreme observations.</p>
+
+<pre><code>PROC UNIVARIATE DATA=SAS-data-set;
+       VAR variable(s);
+RUN;
+</code></pre>
+
+<ul>
+<li><strong>NONOBS</strong> - Suppress reporting the total number of observations for each unique combination of the class variables</li>
+<li><strong>NOPRINT</strong> - Suppress all displayed output</li>
+</ul>
+
+<h3 id="examples">Examples</h3>
+
+<h4 id="outputprocmeanstodataset">output proc means to dataset</h4>
+
+<pre><code>proc means data=orion.order_fact noprint;
+   class Product_ID;
+   var Total_Retail_Price;
+   output out=product_orders 
+        sum(Total_Retail_Price)=Product_Revenue;
+run;
+</code></pre>
+
+<h4 id="creatingasummaryreportwithprocmeans">Creating a Summary Report with PROC MEANS</h4>
+
+<pre><code>proc means data=orion.sales;
+   var Salary;
+run;
+</code></pre>
+
+<h4 id="creatingaprocmeansreportwithgroupeddata">Creating a PROC MEANS Report with Grouped Data</h4>
+
+<pre><code>proc means data=orion.sales;
+   var Salary;
+   class Gender Country;
+run;
+</code></pre>
+
+<h4 id="requestingspecificstatisticsinprocmeans">Requesting Specific Statistics in PROC MEANS</h4>
+
+<pre><code>proc means data=orion.sales n mean;
+   var Salary;
+run;
+proc means data=orion.sales min max sum;
+   var Salary;
+   class Gender Country;
+run;
+</code></pre>
+
+<h4 id="validatingdatausingprocmeans">Validating Data Using PROC MEANS</h4>
+
+<pre><code>proc means data=orion.nonsales2 n nmiss min max;
+   var Salary;
+run;
+</code></pre>
+
+<h4 id="validatingdatausingprocunivariate">Validating Data Using PROC UNIVARIATE</h4>
+
+<pre><code>proc univariate data=orion.nonsales2;
+   var Salary;
+run;
+proc univariate data=orion.nonsales2 nextrobs=3;
+   var Salary;
+run;
+proc univariate data=orion.nonsales2 nextrobs=3;
+   var Salary;
+   id Employee_ID;
+run;
+</code></pre>
+
+<table>
+<colgroup>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">Procedure</th>
+	<th style="text-align:left;">Numeric</th>
+	<th style="text-align:left;">Character</th>
+	<th style="text-align:left;">Method</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;">FREQ</td>
+	<td style="text-align:left;">YES</td>
+	<td style="text-align:left;">YES</td>
+	<td style="text-align:left;">looking at distinct values</td>
+</tr>
+<tr>
+	<td style="text-align:left;">with TABLES statement</td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">PRINT</td>
+	<td style="text-align:left;">YES</td>
+	<td style="text-align:left;">YES</td>
+	<td style="text-align:left;">subsetting observations based on conditions</td>
+</tr>
+<tr>
+	<td style="text-align:left;">with WHERE statements</td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">MEANS</td>
+	<td style="text-align:left;">YES</td>
+	<td style="text-align:left;">NO</td>
+	<td style="text-align:left;">using summary statistics</td>
+</tr>
+<tr>
+	<td style="text-align:left;">with VAR statement</td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">UNIVARIATE</td>
+	<td style="text-align:left;">YES</td>
+	<td style="text-align:left;">NO</td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">with VAR statements</td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="usingtheoutputdeliverysystemods">Using the Output Delivery System (ODS)</h3>
+
+<p>You can use the SAS Output Delivery System to create different output formats by directing output to various ODS destinations. </p>
+
+<pre><code>ODS destination FILE=&quot;filename&quot; &lt;options&gt;;
+      &lt;SAS code to generate the report&gt;
+ODS destination CLOSE; 
+</code></pre>
+
+<h3 id="sampleprograms">Sample Programs</h3>
+
+<h4 id="usingthesasoutputdeliverysystem">Using the SAS Output Delivery System</h4>
+
+<pre><code>ods pdf file=&quot;c:/output/salaries.pdf&quot;;
+proc means data=orion.sales min max sum;
+   var Salary;
+   class Gender Country;
+run;
+ods pdf close;
+ods csv file=&quot;c:/output/salarysummary.csv&quot;;
+proc means data=orion.sales min max sum;
+   var Salary;
+   class Gender Country;
+run;
+ods csv close;
+</code></pre>
+
+<h2 id="controllinginputandoutput">Controlling Input and Output</h2>
+
+<h3 id="writingtomultiplesasdatasets">Writing to Multiple SAS Data Sets</h3>
+
+<pre><code>SELECT &lt;(select-expression)&gt;;
+WHEN-1 (when-expression -1 &lt;…, when-expression-n&gt;) statement;
+WHEN-n (when-expression -1 &lt;…, when-expression-n&gt;) statement;
+&lt;OTHERWISE statement;&gt;
+END;
+</code></pre>
+
+<ul>
+<li>When a SELECT expression is specified, SAS evaluates the SELECT expression and compares that value to each WHEN expression and returns either a true or false.</li>
+<li>If no SELECT expression is specified, SAS evaluates each WHEN expression in order until it finds a true expression. If no WHEN expression is true, SAS executes the OTHERWISE statement if one is present.</li>
+<li>You can use functions in a SELECT expression.</li>
+<li>You can use DO-END groups in a SELECT group. You can execute multiple statements when a WHEN expression is true by using DO-END groups.</li>
+</ul>
+
+<h3 id="controllingvariableinputandoutput">Controlling Variable Input and Output</h3>
+
+<pre><code>SAS-data-set-name (DROP=variable(s)) 
+SAS-data-set-name (KEEP=variable(s))
+</code></pre>
+
+<p>￼
+* When the <strong>DROP=</strong> and <strong>KEEP=</strong> data set options are used in the <strong>SET</strong> statement, the variables are not processed and are not available in the program data vector.
+* When the <strong>DROP=</strong> and <strong>KEEP=</strong> data set options are used in the <strong>DATA</strong> statement, they affect the variables in the output data set they are associated with.
+* <strong>DROP</strong> and <strong>KEEP</strong> statements affect <strong>all</strong> output data sets listed in the DATA statement.
+* You can use a combination of data set options and statements. If you use them together, <strong>statements are applied before data set options</strong>. If you attempt to <strong>drop and keep the same variable</strong>, you will get a <strong>warning</strong>.</p>
+
+<h3 id="controllingobservationinputandoutput">Controlling Observation Input and Output</h3>
+
+<pre><code>SAS-data-set-name (OBS=n)
+SAS-data-set-name (FIRSTOBS=n)
+</code></pre>
+
+<p>￼
+* The <strong>OBS=</strong> data set option specifies the <strong>number of the last observation</strong> to process. It does <strong>not</strong> specify <strong>how many</strong> observations should be processed.
+* The <strong>FIRSTOBS=</strong> data set option specifies a <strong>starting point</strong> for processing an input data set. By <strong>default</strong>, <strong>FIRSTOBS=1</strong>.
+* <strong>FIRSTOBS=</strong> and <strong>OBS=</strong> can be used in a procedure step to limit the number of observations that are processed. If a <strong>WHERE</strong> statement is used to subset the observations, it <strong>is applied before the data set options</strong>.
+* <strong>(OBS - FIRSTOBS) + 1 = Number of Results</strong></p>
+
+<pre><code>data australia;
+   set orion.employee_addresses
+      (firstobs=50 obs=100);
+   if Country='AU' then output;
+run;
+</code></pre>
+
+<p><em>takes from orion.employee_addresses only observation from 50&#8211;100, totalling 51 observations.</em></p>
+
+<pre><code>proc print data=orion.employee_addresses
+           (obs=10);
+   where Country='AU';
+   var Employee_Name City State Country;
+run;
+</code></pre>
+
+<p><em>shows the observation from firstobs=1 (default) to obs=10&#8230; first ten observations</em></p>
+
+<h2 id="sumarizingdata">Sumarizing Data</h2>
+
+<h3 id="creatinganaccumulatingvariableusingtheretainstatement">Creating an Accumulating Variable Using the RETAIN Statement</h3>
+
+<pre><code>RETAIN variable-name &lt;initial-value&gt; ...;
+</code></pre>
+
+<ul>
+<li><p>The <strong>RETAIN</strong> statement is a <strong>compile-time-only</strong> statement that <strong>prevents SAS</strong> from <strong>reinitializing the variable</strong> at the <strong>top of the DATA step</strong>. Because the variable is not reinitialized, it retains its value across multiple iterations of the DATA step.</p></li>
+<li><p>If you <strong>don&#8217;t specify an initial value</strong>, the <strong>RETAIN</strong> statement <strong>initializes</strong> the variable to <strong>missing</strong> before the first execution of the DATA step.</p>
+
+<p>data mnthtot2;
+ set orion.aprsales;
+ retain Mth2Dte 0;
+ Mth2Dte=Mth2Dte+SaleAmt;
+run;</p></li>
+</ul>
+
+<h3 id="creatinganaccumulatingvariableusingthesumstatement">Creating an Accumulating Variable Using the Sum Statement</h3>
+
+<pre><code>variable+expression;
+</code></pre>
+
+<p>As an <strong>alternative</strong> to using the <strong>RETAIN</strong> statement with an assignment statement, you can use the sum statement. </p>
+
+<p><strong>By default</strong>, the sum statement <strong>initializes</strong> the variable <strong>to 0</strong> and retains the variable. It also <strong>ignores missing input values</strong> from the expression.</p>
+
+<pre><code>data mnthtot2;
+   set orion.aprsales;
+   Mth2Dte+SaleAmt;
+run;
+</code></pre>
+
+<h3 id="usingby-groupprocessing:summarizingdatabygroups">Using BY-Group Processing: Summarizing Data by Groups</h3>
+
+<pre><code>DATA output-SAS-data-set; 
+    SET input-SAS-data-set; 
+    BY BY-variable ...;
+    &lt;additional SAS statements&gt; 
+RUN;
+</code></pre>
+
+<ul>
+<li>The BY statement creates two temporary variables (FIRST.variable and LAST.variable) for each BY variable listed. These variables identify the first and last observation in each BY group.</li>
+<li>You can use the FIRST. and LAST. variables in a DATA step to summarize the grouped data.
+
+<ul>
+<li>First, set the accumulating variable equal to 0 at the start of each BY group.</li>
+<li>Second, increment the accumulating variable with a sum statement.</li>
+<li>Third, output only the last observation of each BY group.</li>
+</ul></li>
+</ul>
+
+<p>sample : the following code outputs the total salaries for each department</p>
+
+<pre><code>data deptsals (keep=Dept DeptSal);
+   set SalSort;
+   by Dept;
+   if First.Dept then DeptSal=0;
+   DeptSal+Salary;
+   if Last.Dept;
+run;
+</code></pre>
+
+<h3 id="usingby-groupprocessing:summarizingdatabymultiplegroups">Using BY-Group Processing: Summarizing Data by Multiple Groups</h3>
+
+<ul>
+<li>When you need to accumulate totals for multiple groups, you specify two or more BY variables. The first variable listed becomes the primary sort variable, and the second variable listed is the secondary sort variable.</li>
+<li>The BY statement creates two temporary variables for each BY variable listed.</li>
+<li>If the last observation for a value of the primary sort variable is encountered, it sets LAST. to 1 for all subsequent BY variables. (see example table bellow)</li>
+</ul>
+
+<p>sample 2: </p>
+
+<pre><code>data deptsals (keep=Proj Dept DeptSal NumEmps);
+   set projsort;
+   by Proj Dept;
+   if First.Dept then
+      do;
+         DeptSal=0;
+         NumEmps=0;
+      end;
+   DeptSal+Salary;
+   NumEmps+1;
+   if Last.Dept;
+run;
+</code></pre>
+
+<table>
+<colgroup>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">Proj</th>
+	<th style="text-align:left;">Dept</th>
+	<th style="text-align:left;">FIRST.Proj</th>
+	<th style="text-align:left;">FIRST.Dept</th>
+	<th style="text-align:left;">LAST.Proj</th>
+	<th style="text-align:left;">LAST.Dept</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;">CAP1</td>
+	<td style="text-align:left;">ADMIN</td>
+	<td style="text-align:left;">1</td>
+	<td style="text-align:left;">1</td>
+	<td style="text-align:left;">0</td>
+	<td style="text-align:left;">0</td>
+</tr>
+<tr>
+	<td style="text-align:left;">CAP1</td>
+	<td style="text-align:left;">ADMIN</td>
+	<td style="text-align:left;">0</td>
+	<td style="text-align:left;">0</td>
+	<td style="text-align:left;">0</td>
+	<td style="text-align:left;">0</td>
+</tr>
+<tr>
+	<td style="text-align:left;">CAP1</td>
+	<td style="text-align:left;">ADMIN</td>
+	<td style="text-align:left;">0</td>
+	<td style="text-align:left;">0</td>
+	<td style="text-align:left;">1</td>
+	<td style="text-align:left;"><strong>1</strong></td>
+</tr>
+<tr>
+	<td style="text-align:left;">EZ</td>
+	<td style="text-align:left;">ADMIN</td>
+	<td style="text-align:left;">1</td>
+	<td style="text-align:left;">1</td>
+	<td style="text-align:left;">0</td>
+	<td style="text-align:left;">1</td>
+</tr>
+<tr>
+	<td style="text-align:left;">EZ</td>
+	<td style="text-align:left;">ENGINR</td>
+	<td style="text-align:left;">0</td>
+	<td style="text-align:left;">1</td>
+	<td style="text-align:left;">0</td>
+	<td style="text-align:left;">0</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="readingrawdata">Reading Raw Data</h2>
+
+<h3 id="usingcolumninput">Using Column Input</h3>
+
+<pre><code>INPUT variable &lt;$&gt; startcol-endcol . . . ;
+</code></pre>
+
+<ul>
+<li>You can use column input to read input data that is arranged in columns or fixed fields. To use column input your data must be standard data in fixed columns.</li>
+<li><strong>Standard data</strong> is data that SAS can read without special instructions.</li>
+<li><strong>Nonstandard data</strong> is data that SAS needs special instructions to read.</li>
+</ul>
+
+<h3 id="usingformattedinput">Using Formatted Input</h3>
+
+<pre><code>INPUT column-pointer-control variable informat . . . ;
+
+INPUT @n variable informat . . . ;
+
+INPUT +n variable informat . . . ;
+</code></pre>
+
+<ul>
+<li>You can use <strong>formatted input</strong> to read <strong>both</strong> standard and nonstandard data that is arranged in fixed fields.</li>
+<li>An informat is the special instruction that specifies how SAS reads raw data.</li>
+<li>The <strong>@n</strong> is an <strong>absolute</strong> pointer control that specifies the beginning location for a field.</li>
+<li>The <strong>+n</strong> is a <strong>relative</strong> pointer control that specifies how many columns to move the pointer before reading the next field.</li>
+</ul>
+
+<p>Sample:</p>
+
+<pre><code>data work.discounts;
+infile 'my-file-path\offers.dat'; 
+input @1 Cust_type 4.
+          @5 Offer_dt mmddyy8.
+          @14 Item_gp $8.
+          @22 Discount percent3.;
+run;
+proc print data=work.discounts;
+run;
+</code></pre>
+
+<h3 id="creatingasingleobservationfrommultiplerecords">Creating a Single Observation from Multiple Records</h3>
+
+<p>You can use multiple INPUT statements to read a group of records in a raw data file as a single observation in a new data set.</p>
+
+<pre><code>DATA SAS-data-set;
+    INFILE 'raw-data-file-name';
+    INPUT specifications;
+    INPUT specifications;
+&lt;additional SAS statements&gt;
+</code></pre>
+
+<p>As an alternative to writing multiple INPUT statements, you can write one INPUT statement that contains line pointer controls to specify the record(s) from which values are to be read. There are two line pointer controls, the <strong>forward slash</strong> (a relative line pointer control) and the <strong>#n</strong> (an absolute line pointer control).</p>
+
+<pre><code>DATA SAS-data-set;
+    INFILE 'raw-data-file-name';
+    INPUT specifications /
+    #n specifications; &lt;additional SAS statements&gt;
+</code></pre>
+
+<p>Sample:</p>
+
+<pre><code>data contacts;
+    infile 'my-file-path\address.dat'; input FullName $30.;
+    input;
+    input Address2 $25.;
+    input Phone $8.;
+    run;
+proc print data=work.contacts;
+run;
+</code></pre>
+
+<h3 id="controllingwhenarecordloads">Controlling When a Record Loads</h3>
+
+<pre><code>INPUT specifications . . . @ ;
+</code></pre>
+
+<ul>
+<li>By <strong>default</strong>, <strong>each INPUT</strong> statement in a DATA step <strong>reads a new data record</strong> into the <strong>input buffer</strong>.</li>
+<li>You can use a <strong>line-hold specifier</strong>, the single trailing <strong>@</strong>, to prevent the second INPUT statement in a DATA step from moving to the second line in a raw data file. When you use the trailing @, the pointer position doesn&#8217;t change and a new record isn&#8217;t loaded in the input buffer when a subsequent input statement executes.</li>
+<li>The single trailing <strong>@</strong> <strong>holds a raw data record</strong> in the input buffer
+
+<ul>
+<li>until an <strong>INPUT</strong> statement <strong>without a trailing @</strong> executes or</li>
+<li>the <strong>next iteration of the DATA step</strong> begins.</li>
+</ul></li>
+</ul>
+
+<p>Sample:</p>
+
+<pre><code>data salesQ1;
+    infile 'my-file-path\sales.dat'; input SaleID $4. @6 Location $3. @; if Location='USA' then
+      input @10 SaleDate mmddyy10.
+            @20 Amount 7.;
+   else if Location='EUR' then
+      input @10 SaleDate date9.
+            @20 Amount commax7.;
+run;
+proc print data=salesQ1;
+run;
+</code></pre>
+
+<h3 id="readingrawdatawithmissingvalues">Reading Raw Data with Missing Values</h3>
+
+<pre><code>INFILE 'raw-data-file' MISSOVER;
+</code></pre>
+
+<ul>
+<li>By <strong>default</strong>, the <strong>DATA step</strong> looks in the <strong>next record</strong> if the <strong>end of the current record</strong> is encountered <strong>before</strong> all of the <strong>variables are assigned</strong> values. This default action is known as the <strong>FLOWOVER</strong> option.</li>
+<li>You can override the <strong>FLOWOVER</strong> option by using the <strong>MISSOVER</strong> option, which <strong>causes</strong> the <strong>DATA step</strong> to <strong>assign missing values</strong> to any variables that do not have values in the PDV when the end of a record is reached.</li>
+<li>The <strong>MISSOVER</strong> option works <strong>only</strong> for missing values that <strong>occur at the end</strong> of the record.</li>
+</ul>
+
+<p>However,</p>
+
+<pre><code>INFILE 'raw-data-file' DSD;
+</code></pre>
+
+<p>The <strong>DSD</strong> option sets the <strong>default delimiter</strong> to a <strong>comma</strong>, treats <strong>consecutive delimiters</strong> as <strong>missing values</strong>, and <strong>enables SAS</strong> to <strong>read values</strong> with <strong>embedded delimiters</strong> if the value is surrounded by <strong>quotation marks</strong>.</p>
+
+<h3 id="creatingmultipleobservationsfromasinglerecord">Creating Multiple Observations from a Single Record</h3>
+
+<pre><code>INPUT specifications @@;
+INFILE 'raw-data-file' DSD;
+</code></pre>
+
+<p>You can use the the <strong>double trailing @@</strong>, which is a <strong>line pointer control</strong>, to <strong>hold a record across iterations</strong> of the DATA step. The double trailing @@ should only be used with list input and <strong>should not be used</strong> with the <strong>MISSOVER</strong> option.</p>
+
+<p>A record that is being held by the double trailing @@ is <strong>not released until</strong>
+* the input pointer moves past the end of the record or
+* an INPUT statement that has no line-hold specifier executes.</p>
+
+<p>Sample:</p>
+
+<pre><code>data donate07;
+    length ID $ 4;
+    infile 'my-file-path\charity.dat'; 
+    input ID $ Amount @@;
+run;
+proc print data=work.donate07;
+run;
+</code></pre>
+
+<h2 id="manipulatingcharactervalues">Manipulating Character Values</h2>
+
+<table>
+<colgroup>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">Function</th>
+	<th style="text-align:left;">Purpose</th>
+	<th style="text-align:left;">Output Size</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;">Var=SUBSTR(string,start&lt;,length&gt;);</td>
+	<td style="text-align:left;">On the right side of an assignment statement, the SUBSTR function extracts a substring of characters from a character string, starting at a specified position in the string.</td>
+	<td style="text-align:left;">Same as input</td>
+</tr>
+<tr>
+	<td style="text-align:left;">LENGTH(argument)</td>
+	<td style="text-align:left;">The LENGTH function returns the length of a character string, excluding trailing blanks.</td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">RIGHT(argument)</td>
+	<td style="text-align:left;">The RIGHT function right-aligns a value. If there are trailing blanks, they are moved to the beginning of the value.</td>
+	<td style="text-align:left;">Same as input</td>
+</tr>
+<tr>
+	<td style="text-align:left;">LEFT(argument)</td>
+	<td style="text-align:left;">The LEFT function left-aligns a character value. If there are leading blanks, they are moved to the end of the value.</td>
+	<td style="text-align:left;">Same as input</td>
+</tr>
+<tr>
+	<td style="text-align:left;">CHAR(string,position)</td>
+	<td style="text-align:left;">The CHAR function returns a single character from a specified position in a character string.</td>
+	<td style="text-align:left;">1</td>
+</tr>
+<tr>
+	<td style="text-align:left;">PROPCASE(argument&lt;,delimiter(s)&gt;)</td>
+	<td style="text-align:left;">The PROPCASE function converts all letters in a value to proper case.</td>
+	<td style="text-align:left;">200</td>
+</tr>
+<tr>
+	<td style="text-align:left;">UPCASE(argument)</td>
+	<td style="text-align:left;">The UPCASE function converts all letters in a value to uppercase.</td>
+	<td style="text-align:left;">Same as input</td>
+</tr>
+<tr>
+	<td style="text-align:left;">LOWCASE(argument)</td>
+	<td style="text-align:left;">The LOWCASE function converts all letters in a value to lowercase.</td>
+	<td style="text-align:left;">Same as input</td>
+</tr>
+<tr>
+	<td style="text-align:left;">SCAN (string,n&lt;,&#8217;delimiter(s)&#8217;&gt;)</td>
+	<td style="text-align:left;">The SCAN function enables you to separate a character value into words and to return the nth word.</td>
+	<td style="text-align:left;">200</td>
+</tr>
+<tr>
+	<td style="text-align:left;">CATX (separator,string1,&#8230;,string-n)</td>
+	<td style="text-align:left;">The CATX function removes leading and trailing blanks, inserts separators, and returns a concatenated character string.</td>
+	<td style="text-align:left;">200</td>
+</tr>
+<tr>
+	<td style="text-align:left;">NewVar=string1 !! string2;</td>
+	<td style="text-align:left;">The concatenation operator joins character strings.</td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">TRIM(argument)</td>
+	<td style="text-align:left;">The TRIM function removes trailing blanks from a character string.</td>
+	<td style="text-align:left;">Same as input</td>
+</tr>
+<tr>
+	<td style="text-align:left;">STRIP(argument)</td>
+	<td style="text-align:left;">The STRIP function removes leading and trailing blanks from a character string.</td>
+	<td style="text-align:left;">Same as input</td>
+</tr>
+<tr>
+	<td style="text-align:left;">CAT(string1,&#8230;,string-n)</td>
+	<td style="text-align:left;">These functions return concatenated character strings. The CAT function does not remove any leading or trailing blanks. The CATT function trims trailing blanks. The CATS function strips leading and trailing blanks.</td>
+	<td style="text-align:left;">200</td>
+</tr>
+<tr>
+	<td style="text-align:left;">CATT(string1,&#8230;,string-n)</td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">CATS(string1,&#8230;,string-n)</td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">FIND (string,substring&lt;,modifiers,start&gt;)</td>
+	<td style="text-align:left;">The FIND function searches for a specific substring of characters within a character string that you specify. The function searches for the first occurrence of the substring and returns the starting position of that substring. If the substring is not found in the string, FIND returns a value of 0.</td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">SUBSTR(string,start&lt;,length&gt;)=value;</td>
+	<td style="text-align:left;">On the left side of the assignment statement, the SUBSTR function replaces characters at a specified position within</td>
+	<td style="text-align:left;">if length is not declaring, default is 8.</td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;">the value.</td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">TRANWRD (source,target,replacement)</td>
+	<td style="text-align:left;">The TRANWRD function replaces or removes all occurrences of a given word (or a pattern of characters) within a</td>
+	<td style="text-align:left;">200</td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;">character string.</td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">COMPRESS (source&lt;,chars&gt;)</td>
+	<td style="text-align:left;">The COMPRESS function removes the</td>
+	<td style="text-align:left;">Same as input</td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;">characters listed in the chars argument</td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;">from the source. If no characters are</td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;">specified, the COMPRESS function</td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;">removes all blanks from the source.</td>
+	<td style="text-align:left;"></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="manipulationnumericvalues">Manipulation Numeric Values</h2>
+
+<table>
+<colgroup>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">Function</th>
+	<th style="text-align:left;">Returns</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;">SUM</td>
+	<td style="text-align:left;">the sum of the nonmissing arguments</td>
+</tr>
+<tr>
+	<td style="text-align:left;">MEAN</td>
+	<td style="text-align:left;">the arithmetic mean (average) of the arguments</td>
+</tr>
+<tr>
+	<td style="text-align:left;">MIN</td>
+	<td style="text-align:left;">the smallest value from the arguments</td>
+</tr>
+<tr>
+	<td style="text-align:left;">MAX</td>
+	<td style="text-align:left;">the largest value from the arguments</td>
+</tr>
+<tr>
+	<td style="text-align:left;">N</td>
+	<td style="text-align:left;">the number of nonmissing arguments</td>
+</tr>
+<tr>
+	<td style="text-align:left;">NMISS</td>
+	<td style="text-align:left;">the number of missing numeric arguments</td>
+</tr>
+<tr>
+	<td style="text-align:left;">CMISS</td>
+	<td style="text-align:left;"></td>
+</tr>
+</tbody>
+</table>
+
+<ul>
+<li>You can list all the variables in the function, or you can use a variable list by preceding the first variable name in the list with the keyword OF.</li>
+</ul>
+
+<table>
+<colgroup>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">Variable List</th>
+	<th style="text-align:left;">Description</th>
+	<th style="text-align:left;">Example</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;">Numbered</td>
+	<td style="text-align:left;">all variables x1 to xn, inclusive</td>
+	<td style="text-align:left;">Total = sum(of Qtr1-Qtr4);</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Range</td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;">Name Range</td>
+	<td style="text-align:left;">all variables ordered as they are in the program data vector, from x to a inclusive</td>
+	<td style="text-align:left;">Total = sum(of Qtr1&#8211;Fourth);</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Name Prefix</td>
+	<td style="text-align:left;">all variables that begin with the same string</td>
+	<td style="text-align:left;">Total = sum(of Tot:);</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Special SAS</td>
+	<td style="text-align:left;">all of the variables, all of the character variables, or all of the numeric variables that are already defined in the current DATA step</td>
+	<td style="text-align:left;">Total = sum(of <em>All</em>);</td>
+</tr>
+<tr>
+	<td style="text-align:left;">Name List:</td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;">Total = sum(of <em>Character</em>);</td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+</tr>
+<tr>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;"></td>
+	<td style="text-align:left;">Total = sum(of <em>Numeric</em>);</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="truncatingnumericvalues">Truncating Numeric Values</h3>
+
+<pre><code>ROUND(argument&lt;,round-off-unit&gt;)
+CEIL(argument)
+FLOOR(argument)
+INT(argument)
+</code></pre>
+
+<ul>
+<li>The <strong>ROUND</strong> function returns a value rounded to the nearest multiple of the round-off unit. If you don&#8217;t specify a round-off unit, the argument is rounded to the nearest integer.</li>
+<li>The <strong>CEIL</strong> function returns the smallest integer greater than or equal to the argument.</li>
+<li>The <strong>FLOOR</strong> function returns the greatest integer less than or equal to the argument.</li>
+<li>The <strong>INT</strong> function returns the integer portion of the argument.</li>
+</ul>
+
+<h3 id="convertingvalues">Converting values</h3>
+
+<p>You can allow SAS to automatically convert data to a different data type for you, but it can be more efficient to use SAS functions to explicitly convert data to a different data type.</p>
+
+<p>By default, if you reference a character variable in a numeric context, SAS tries to convert the variable values to numeric. Automatic conversion uses the w. informat, and it produces a numeric missing value from any character value that does not conform to standard numeric notation.</p>
+
+<pre><code>INPUT(source, informat)
+</code></pre>
+
+<p>You can use the <strong>INPUT</strong> function to explicitly <strong>convert character</strong> values <strong>to numeric</strong> values. The INPUT function returns the value that is produced when the source is read with a specified informat.</p>
+
+<p>Numeric data values are automatically converted to character values whenever they are used in a character context. SAS writes the numeric value with the <strong>BEST12.</strong> format and <strong>right aligns</strong> the value. The resulting value might contain leading blanks.</p>
+
+<pre><code>PUT(source, format)
+</code></pre>
+
+<p><strong>PUT</strong> function is used to explicitly control the <strong>numeric-to-character</strong> conversion using a format.</p>
+
+<h2 id="debuggingtechniques">Debugging Techniques</h2>
+
+<pre><code>PUTLOG &lt;specifications&gt;;
+PUTLOG 'text';
+PUTLOG variable-name=;
+PUTLOG variable-name=format-namew.; 
+PUTLOG _ALL_;
+</code></pre>
+
+<p><em>To write the current contents of the PDV to the log, use the <em>ALL</em> option in the PUTLOG statement. When you use the <em>ALL</em> option, the values of the automatic variables <em>ERROR</em> and <em>N</em> are included in the log.</em></p>
+
+<pre><code>SET SAS-data-set END= variable &lt;options&gt;;
+INFILE 'raw-data-file' END= variable &lt;options&gt;;
+</code></pre>
+
+<p>￼
+You can use the <strong>END=</strong> option in the SET statement to create and name a temporary variable that acts as an end-of-file indicator. You can also use the END= option in an INFILE statement to indicate the end of a raw data file.</p>
+
+<h3 id="usingthedatastepdebugger">Using the DATA Step Debugger</h3>
+
+<pre><code>DATA data-set-name/DEBUG;
+</code></pre>
+
+<ul>
+<li>You can also debug logic errors by using the DATA step debugger. This tool consists of windows and a group of commands. By issuing commands, you can execute DATA step statements one by one and pause to display the resulting variable values in a window. By observing the results that are displayed, you can determine where the logic error occurs.</li>
+<li>The DATA Step Debugger can only be used in an interactive session. To invoke the debugger, you use the DEBUG option in the DATA statement. Because the debugger is interactive, you can repeat the process of issuing commands and observing results as many times as you need during a single debugging session.</li>
+<li>Once the DATA step comes to an end, it can’t be restarted. You can examine the final values of the variables. But, to restart the debugging process, you have to quit and then restart the DATA Step Debugger.</li>
+</ul>
+
+<h2 id="usingiterativedoloops">Using iterative DO loops</h2>
+
+<h3 id="constructingasimpledoloop">Constructing a Simple DO Loop</h3>
+
+<pre><code>DO index-var=start TO stop &lt;BY increment&gt;;
+    iterated SAS statements...
+END;
+
+DO index-var=item-1 &lt;,... item-n&gt;; 
+    iterated SAS statements...
+END;
+</code></pre>
+
+<ul>
+<li>An iterative DO loop executes the statements between the DO statement and the END statement repetitively.</li>
+<li>If you do not specify an increment for a DO loop, the increment defaults to 1.</li>
+<li>If your start value is greater than your stop value, you must specify an increment that is negative.</li>
+<li>You can use an item list rather than a start value and stop value to control your DO loop. The items must either be all numeric or all character constants, or they can be variables.</li>
+</ul>
+
+<h3 id="conditionallyexecutingdoloops">Conditionally Executing DO Loops</h3>
+
+<pre><code>DO UNTIL (expression); 
+    iterated SAS statements...
+END;
+
+DO WHILE (expression); 
+    iterated SAS statements...
+END;
+
+
+DO index-var=start TO stop &lt;BY increment&gt; 
+    UNTIL | WHILE (expression);
+    iterated SAS statements...
+END;
+</code></pre>
+
+<ul>
+<li>In a <strong>DO UNTIL</strong> loop, SAS evaluates the expression at the bottom of the loop after each iteration.</li>
+<li>In a <strong>DO WHILE</strong> loop, SAS evaluates the condition at the top of the loop and executes the statements within the loop if the condition is true.</li>
+<li>Nesting of the DO loops is supported.</li>
+</ul>
+
+<h2 id="usingsasarrays">Using SAS Arrays</h2>
+
+<h3 id="understandingsasarrays">Understanding SAS Arrays</h3>
+
+<ul>
+<li>A SAS array is a temporary grouping of elements that exists only for the duration of the DATA step. <strong>Unlike arrays in other programming languages, SAS arrays are not data structures.</strong></li>
+<li>An array is identified by a single unique name. The array name must be different from any variable name in the data set you are referencing.</li>
+<li>All variables that are grouped together in an array must be the same type: either all character or all numeric.</li>
+<li>Arrays can be one-dimensional or multi-dimensional.</li>
+</ul>
+
+<h3 id="creatingsasarrays">Creating SAS Arrays</h3>
+
+<pre><code>ARRAY array-name {dimension} &lt;array-elements&gt;;
+</code></pre>
+
+<ul>
+<li>dimension describes the number and arrangement of elements in the array. The default dimension is one. The array dimension must be enclosed in braces, parentheses, or brackets. It is best to use braces or brackets so that there is no confusion with functions.</li>
+<li>You can use an asterisk to indicate the dimension of a one-dimensional array. When you use an asterisk, SAS determines the dimension of the array by counting the variables in the list of array elements. You can list each variable name separated by a space, or you can use a numbered range list or name range list specification.</li>
+<li>To create an array of character variables, type a dollar sign ($) after the dimension in the ARRAY statement. By default, all character variables that are created in an ARRAY statement are assigned a length of 8. You can assign a different length by specifying the length after the dollar sign.</li>
+<li>array-elements lists the variables to include in the array. Array elements can be listed in any order, but they must be either all numeric or all character. You can list each variable name separated by a space, or you can use a variable list. You can also specify the keywords <em>NUMERIC</em> or <em>CHARACTER</em> .</li>
+</ul>
+
+<p><strong>DIM</strong> returns number of elements in the array:</p>
+
+<pre><code>DIM(array-name)
+</code></pre>
+
+<h2 id="trickythings">TRICKY THINGS</h2>
+
+<h3 id="lengththing">Length thing</h3>
+
+<p>The <strong>LENGTH</strong> statement must precede the <strong>INPUT</strong> statement in order to correctly set the length of the variable.</p>
+
+<p><strong>Length</strong> statement defines the input variables as much as input does, so if it does something like this </p>
+
+<pre><code>length d $ 12 e $ 1 f $ 8;
+input a b c d e f; 
+</code></pre>
+
+<p>the final order of variable in the sas dataset would be then </p>
+
+<pre><code>d e f a b c ????
+</code></pre>
+
+<h3 id="differencebetweeninformatandformat">Difference between INFORMAT and FORMAT</h3>
+
+<p>formats - how to write
+informats - how to read</p>
+
+<h3 id="datawithrawdataandwherestatement">DATA WITH RAW DATA AND WHERE STATEMENT</h3>
+
+<p><strong>WHERE</strong> statement cannot be used in the <strong>DATA</strong> step when input data is not the sas dataset.</p>
+
+<h3 id="arithmeticoperationsandmissingvalues">Arithmetic operations and Missing values</h3>
+
+<p>When in <strong>DATA</strong> step, </p>
+
+<pre><code>C = A + B
+</code></pre>
+
+<p>and A is a missing value, then C will be missing value.</p>
+
+<p>BUT when </p>
+
+<pre><code>C = SUM(A,B)
+</code></pre>
+
+<p>and A is a missing value, then C will be B, as it sums all non-missing values and ignores the missing values.</p>
+
+<h3 id="defaultsizeofthevariables">Default size of the variables</h3>
+
+<p>when assigning new values, in case of <strong>numeric value</strong>, the <strong>default size</strong> is <strong>8</strong>. however, when it is case of <strong>character value</strong>, the sas checks the size of the <strong>first value being assigned</strong> to this variable, and sets size to its size.</p>
+
+<h3 id="procmeanscreatesallstatistics">PROC MEANS creates all statistics</h3>
+
+<p>By default, a PROC MEANS step that has no CLASS statement produces all of these statistics <strong>except for N Obs</strong>.</p>
+
+<h3 id="retainstatement">RETAIN STATEMENT</h3>
+
+<ul>
+<li>It prevents SAS from reinitializing the values of the new variables named in the RETAIN statement at the top of the DATA step.</li>
+<li>It is compile-time-only statement.</li>
+<li>It retains the value of the variable named in the RETAIN statement in the PDV across iterations of the DATA step.</li>
+<li>It initializes the retained variable to missing before the first execution of the DATA step if an initial value is not specified.</li>
+<li>The Variable referenced in the RETAIN statement appears in the output SAS dataset only if it is given an initial value or referenced elsewhere in the DATA step.</li>
+</ul>
+
+<h3 id="bygroup">By GROUP</h3>
+
+</body>
+</html>
