@@ -1,5 +1,3 @@
 # Documents
 
-Here I place all documents I created for learning purposes.
-
-
+A Repository of markdown documents created for learning purposes.
